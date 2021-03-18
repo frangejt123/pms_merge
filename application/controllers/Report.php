@@ -161,4 +161,59 @@ class Report extends CI_Controller {
             $this->load->view('report/drinkpercentage_report', $d);
 
         }
+
+		public function productlist(){
+			$this->load->library('Pdf');
+			$this->load->model('modReport', "", TRUE);
+			$this->load->model('modProduct', "", TRUE);
+			$this->load->model('modKit', "", TRUE);
+			$this->load->model('modBranch', "", TRUE);
+			$param = $this->input->get(NULL, "true");
+
+			$product = $this->modProduct->getAll(null)->result_array();
+			$kit_composition = $this->modKit->getAll(null)->result_array();
+			$parent_product = $this->modKit->getParent(null)->result_array();
+
+			$branchParam["id"] = $param["branch"];
+			$branchData = $this->modBranch->getAll($branchParam)->row_array();
+
+			$kit = array();
+			foreach($kit_composition as $ind => $row){
+				$pkey = $row["product_id"];
+				$pdata = array(
+					"parent_id" => $row["parent_id"],
+					"description" => $row["description"],
+					"quantity" => $row["quantity"]
+				);
+				if(array_key_exists($pkey, $kit)){
+					array_push($kit[$pkey]["parent"], $pdata);
+				}else{
+					$kit[$pkey]["parent"] = array($pdata);
+				}
+			}
+
+			foreach($product as $ind => $row){
+				$pkey = $row["id"];
+				$kit[$pkey]["product_code"] = $pkey;
+				$kit[$pkey]["description"] = $row["description"];
+				$kit[$pkey]["price"] = number_format($row["price"], 2);
+			}
+
+
+			foreach($parent_product as $ind => $row){
+				$pkey = $row["id"];
+				$kit[$pkey]["product_code"] = $pkey;
+				$kit[$pkey]["description"] = $row["description"];
+				$kit[$pkey]["price"] = number_format($row["price"], 2);
+			}
+
+			ksort($kit);
+
+			$d = array();
+			$d["kit"] = $kit;
+			$d["address"] = $branchData["address"];
+			$d["operated_by"] = $branchData["operated_by"];
+
+			$this->load->view('report/productlist_report', $d);
+	}
 }

@@ -57,7 +57,7 @@ class ModKit extends CI_Model {
 			$tablefield .= $field . " AS `" . $alias . "`";
 		}
 
-		$this->db->select("product.description, product.id");
+		$this->db->select("product.description, product.id, product.price");
 		$this->db->from("product");
 
 		$this->db->where('NOT EXISTS (SELECT id

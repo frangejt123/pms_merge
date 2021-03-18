@@ -95,6 +95,7 @@ class Weekview extends CI_Controller {
 		$param = $this->input->post(NULL, "true");
 
 		$draw = $param['draw'];
+		$param["branch_id"] = $_SESSION["rgc_branch_id"];
 
 		$param["datefrom"] = $param["startDate"];
 		$param["dateto"] = $param["endDate"];

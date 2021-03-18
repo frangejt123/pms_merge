@@ -1,7 +1,7 @@
 $(document).ready(function(){
 	var docheight = $(window).height();
 
-	$("div#iframecontainer").html('<iframe width="100%" id="report_iframe" style="border: 0px;"></iframe>')
+	$("div#iframecontainer").html('<iframe width="100%" id="report_iframe" style="border: 0px;"></iframe>');
 
 
 	$("iframe#report_iframe").height((docheight-158)+"px");
@@ -30,14 +30,17 @@ $(document).ready(function(){
     $("button#print_report").on("click", function(){
     	var report = Array(
     		"productmovement",
-    		"drinkpercentage"
+    		"drinkpercentage",
+			"mealcount",
+			"productcontribution",
+			"productlist"
     	);
 
     	var id = $('.select2#report_name').val();
     	var datefrom = $("input#report_date_from").val();
     	var dateto = $("input#report_date_to").val();
     	var branch;
-    	
+
     	if(access_level == 0){//if admin
     		branch = $(".select2#report_branch").select2('val');
     	}else{

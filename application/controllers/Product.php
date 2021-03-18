@@ -53,7 +53,8 @@ class Product extends CI_Controller {
         if(isset($param["product_kit"]))
 			if(count($param["product_kit"]) > 0){
 				foreach($param["product_kit"] as $ind => $row){
-					$row["parent_id"] = $param["id"];
+					$row["parent_id"] = $ind;
+					$row["product_id"] = $param["id"];
 					$this->modKit->insert($row);
 				}
 			}

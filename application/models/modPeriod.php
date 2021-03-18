@@ -130,6 +130,7 @@ class ModPeriod extends CI_Model {
 		$this->db->from("period");
 		$this->db->where('period.date >=', $param["datefrom"]);
 		$this->db->where('period.date <=', $param["dateto"]);
+		$this->db->where('period.branch_id =', $param["branch_id"]);
 		$query = $this->db->get();
 
 		return $query;

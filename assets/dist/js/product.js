@@ -1,6 +1,5 @@
 $(document).ready(function(){
 	var productkit = {};
-
 	$("button#new_product_btn").on("click", function(){
 		$("div#new_product_modal").modal("show");
 		var inputs = $("form#newProductForm").find("input");
@@ -9,6 +8,8 @@ $(document).ready(function(){
 			$(this).val("");
 		});
 		$("select#product_uom").removeClass("emptyField");
+		console.log("asd");
+		$("table#kit_composition_table tbody tr").remove();
 	});
 
 	$("button#clear_new_product").on("click", function(){
@@ -148,7 +149,7 @@ $(document).ready(function(){
 				mode = "deleted";
 			}
 
-			var rowdata = {product_id, quantity, mode, id};
+			var rowdata = {id, quantity, mode};
 			productkit[product_id] = rowdata;
 			// productkit.push(rowdata);
 		});
@@ -234,6 +235,9 @@ $(document).ready(function(){
 	        });
 			return;
 		}
+
+		// console.log(data);
+		// return;
 
 		$.ajax({
 			method: "POST",

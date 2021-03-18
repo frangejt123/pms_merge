@@ -92,6 +92,7 @@ class Dashboard extends CI_Controller {
 
 		$param["datefrom"] = $param["date"][0];
 		$param["dateto"] = $param["date"][6];
+		$param["branch_id"] = $_SESSION["rgc_branch_id"];
 
 //		$param["datefrom"] = "2021-01-01";
 //		$param["dateto"] = "2021-01-07";
@@ -361,14 +362,15 @@ class Dashboard extends CI_Controller {
 					//"color" => '#'.$this->random_color_part().$this->random_color_part().$this->random_color_part() // generate random color
 				);
 
-				if($row["type"] == 0){
-					$product_meal_arr[intval($contribution)] = array(
+				if($row["type"] == 2){
+					$product_drinks_arr[intval($contribution)] = array(
 						"name" => $row["desc"],
 						"y" => $contribution,
 						"drilldown" => strval($ind)
 					);
 				}else{
-					$product_drinks_arr[intval($contribution)] = array(
+
+					$product_meal_arr[intval($contribution)] = array(
 						"name" => $row["desc"],
 						"y" => $contribution,
 						"drilldown" => strval($ind)
