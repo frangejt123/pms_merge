@@ -309,6 +309,54 @@
 	</div>
 	<!-- confirm modal -->
 
+<!-- modal [change pwd] -->
+<div class="modal fade" id="changepass_modal" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">×</span></button>
+					<h4 class="modal-title"><span
+								style="border-radius: 2px; padding: 6px;
+            border: 1px solid #008d4c; background-color: #00a65a; color: #FFF";
+								class="fa fa-key"></span> &nbsp; <b>Change Password</b></h4>
+				</div>
+				<div class="modal-body">
+					<form role="form" id="changePasswordForm">
+						<div class="box-body">
+							<div class="form-group">
+								<label for="current_password">Current Password</label>
+								<input type="password" class="form-control" id="current_password">
+							</div>
+
+							<div class="form-group">
+								<label for="new_password">New Password</label>
+								<input type="password" class="form-control" id="new_password">
+							</div>
+
+							<div class="form-group">
+								<label for="confirm_new_password">Confirm New Password</label>
+								<input type="password" class="form-control" id="confirm_new_password">
+							</div>
+
+						</div>
+					</form>
+				</div><!-- body -->
+				<div class="modal-footer">
+					<div id="footer">
+						<div class="btn-group btn-group-justified" id="form-mode-buttons" role="group" >
+							<button type="button" id="clear_changepass" class="btn btn-default" style="width:49%">
+								<i class="fa fa-undo"></i>&nbsp; Clear
+							</button>
+							<button type="button" id="changepassword_submitbtn" class="btn btn-primary" data-key-method="ok" style="width:49%">
+								<i class="fa fa-save"></i>&nbsp; Save
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 	<footer class="main-footer">
 		<div class="pull-right hidden-xs">
 			<b>v1.0</b>
