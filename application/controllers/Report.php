@@ -181,6 +181,7 @@ class Report extends CI_Controller {
 			foreach($kit_composition as $ind => $row){
 				$pkey = $row["product_id"];
 				$pdata = array(
+					"code" => $row["product_id"],
 					"parent_id" => $row["parent_id"],
 					"description" => $row["description"],
 					"quantity" => $row["quantity"]
@@ -213,6 +214,8 @@ class Report extends CI_Controller {
 			$d["kit"] = $kit;
 			$d["address"] = $branchData["address"];
 			$d["operated_by"] = $branchData["operated_by"];
+
+            // print_r($d);
 
 			$this->load->view('report/productlist_report', $d);
 	}

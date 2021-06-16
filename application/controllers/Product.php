@@ -104,5 +104,132 @@ class Product extends CI_Controller {
 
 	    $res = $this->modProduct->delete($param);
 	    echo json_encode($res);
-  	}
+	}
+
+	public function uploadmasterlist(){
+	    $this->load->model('modProduct', "", TRUE);
+		$param = $this->input->post(NULL, "true");
+        $filedata = isset($_FILES["csvfile"]) ? $this->parse_data($_FILES["csvfile"]) : null;
+
+		$productmaster = $this->modProduct->getAll($param)->result_array();
+		
+		$productdata = [];
+		foreach($productmaster as $ind => $row){
+			$productdata[$row["id"]] = $row;
+		}
+
+		$changes = [];
+		foreach($filedata['productlist'] as $ind => $row){
+			
+			$action = "";
+			if(array_key_exists($ind, $productdata)){
+				$db_data = $productdata[$row["product_code"]];
+				if(strtoupper($row["description"]) !== strtoupper($db_data["description"]) || $row["price"] !== $db_data["price"]){
+
+						$changes[$row["product_code"]] = array(
+							'old_data' => array(
+								'id' => $db_data["id"],
+								'description' => $db_data["description"],
+								'price' => $db_data["price"],
+							),
+							'new_data' => array(
+								'id' => $row["product_code"],
+								'description' => $row["description"],
+								'price' => $row["price"],
+							),
+							'action' => 'UPDATE'
+						);
+				} 
+			} else {
+				$changes[$row["product_code"]] = array(
+					'old_data' => array(
+						'id' => '',
+						'description' => '',
+						'price' => 0,
+					),
+					'new_data' => array(
+						'id' => $row["product_code"],
+						'description' => $row["description"],
+						'price' => $row["price"],
+					),
+					'action' => 'INSERT'
+				);
+			}
+		};
+
+	    echo json_encode($changes);
+	}
+
+	public function applychanges(){
+		$this->load->model('modProduct', "", TRUE);
+		$param = $this->input->post(NULL, "true");
+		$err = 0;
+		foreach($param as $ind => $row){
+			$res;
+			if($row["action"] == "INSERT"){
+				$row['data']['uom'] = '1';
+				$res = $this->modProduct->insert($row['data']);
+			}else if($row["action"] == "UPDATE"){
+				$res = $this->modProduct->update($row['data']);
+			}
+			if(!$res["success"]){
+				$err++;
+			}
+		}
+
+		if($err > 0){
+			print_r("error");
+		}else{
+			print_r("success");
+		}
+	}
+
+	public function parse_data($path){
+
+        if(!is_null($path)){
+            $file = fopen($path['tmp_name'], "r");
+            $row_data = array();
+            while (!feof($file)) {
+                $csv = fgetcsv($file);
+				
+				if(isset($csv[0])){
+					if ($csv[0] != "id") {
+						$row_data[$csv[0]]["product_code"] = $csv[0];
+						$row_data[$csv[0]]["description"] = $csv[1];
+						$row_data[$csv[0]]["price"] = $csv[3];
+					}
+				}
+				
+            }
+			fclose($file);
+
+            $data = array(
+                "productlist" => $row_data,
+            );
+            return $data;
+        }
+	}
+
+	public function exportdata(){
+		$this->load->model('modProduct', "", TRUE);
+        $param = $this->input->post(NULL, "true");
+
+        $products = $this->modProduct->getAll($param)->result_array();
+
+		$columnHeader = '';  
+		$columnHeader = "CODE,DESCRIPTION,PRICE"; 
+		$setData = '';
+
+		foreach($products as $ind => $row){
+			$value = $row['id'] . ',' . $row['description'] . ',' . $row['price'] ; 
+			$setData .= trim($value) . "\n";  
+		}
+
+		header("Content-type: application/octet-stream");  
+		header("Content-Disposition: attachment; filename=product_data.csv");  
+		header("Pragma: no-cache");  
+		header("Expires: 0");  
+		
+		echo ucwords($columnHeader) . "\n" . $setData . "\n";  
+	}
 }

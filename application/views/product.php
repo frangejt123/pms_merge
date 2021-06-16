@@ -126,7 +126,16 @@
         </div>
       </span>
       <span class="pull-right">
-        <button type="button" class="btn btn-info" id="new_product_btn"><i class="fa fa-plus"></i>&nbsp; New Product</button>
+        <button type="button" class="btn btn-success" id="new_product_btn"><i class="fa fa-plus"></i>&nbsp; New Product</button>
+      </span>
+      <span class="btn-separator pull-right"></span>
+      <span class="pull-right">
+        <button type="button" class="btn btn-primary" id="import_product_btn"><i class="fa fa-upload"></i>&nbsp; Import Product Data</button>
+        &nbsp; &nbsp;
+      </span>
+      <span class="pull-right">
+        <button type="button" class="btn btn-info" id="export_product_btn"><i class="fa fa-download"></i>&nbsp; Export Product Data</button>
+        &nbsp; &nbsp;
       </span>
       <div class="clearfix"></div>
       <br/>
@@ -404,6 +413,114 @@
     <strong><a href="http://www.delcom.com.ph/" target="_blank">Delcom Systems and  Solution Corporation</a>.</strong> All rights reserved 2019.
   </footer>
 </div>
+
+<!-- modal [import product] -->
+<div class="modal fade" id="import_product_modal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-med" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">×</span></button>
+          <h4 class="modal-title"><span style="border-radius: 2px; padding: 6px; border: 1px solid #008d4c; background-color: #00a65a; color: #FFF"; 
+            class="fa fa-plus"></span> &nbsp; <b>Import Product Masterfile</b></h4>
+        </div>
+        <div class="modal-body">
+          <form role="form">
+            <div class="box-body">
+
+            <div class="row" id="row-browse_csv_file">
+								<br />
+								<div class="form-group">
+									<div class="input-group">
+										<label class="input-group-btn">
+											<span class="btn btn-info">
+												Browse&hellip; <input type="file" style="display: none;" id="csvtxtbox">
+											</span>
+										</label>
+										<input type="text" id="csv_file_input" class="form-control fileinput pms_field" value="" readonly>
+									</div>
+								</div>
+							</div>
+
+                <div class="row">
+                    <div id="error_cont" style='display: none;'>
+                    </div>
+                </div>
+             </div>
+          </form>
+        </div><!-- body -->
+        <div class="modal-footer">
+              <div id="footer">
+                  <div class="btn-group btn-group-justified" id="form-mode-buttons" role="group">
+                    <button type="button" id="clear_pms_field" class="btn btn-default" data-key-method="cancel"  style="width:45%">
+                          <i class="fa fa-trash-o"></i>&nbsp; Clear
+                    </button>
+                    <button type="button" id="import_productfile_btn" class="btn btn-primary" data-key-method="ok" style="width:53%;margin-right: 2px;">
+                           <i class="fa fa-save"></i>&nbsp; Import
+                    </button>
+                  </div>
+              </div>
+        </div>
+      </div>
+    </div>
+</div>
+<!-- modal [import product]-->
+
+<!-- modal [product changes] -->
+<div class="modal fade" id="product_changes_modal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">×</span></button>
+          <h4 class="modal-title"><span style="border-radius: 2px; padding: 6px; border: 1px solid #008d4c; background-color: #00a65a; color: #FFF"; 
+            class="fa fa-history"></span> &nbsp; <b>Product Changes</b></h4>
+        </div>
+        <div class="modal-body">
+        
+              <table class="table table-hover" id="product_changes_table">
+                <thead>
+                    <tr>
+                        <th width="15px"></th>
+                        <th colspan="3">
+                            OLD PRODUCT DATA
+                        </th>
+                        <th colspan="3">
+                            NEW PRODUCT DATA
+                        </th>
+                    </tr>
+                    <tr>
+                        <th></th>
+                        <th>Product Code</th>
+                        <th>Description</th>
+                        <th>Price</th>
+                        <th>Product Code</th>
+                        <th>Description</th>
+                        <th>Price</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        
+        </div><!-- body -->
+        <div class="modal-footer">
+              <div id="footer">
+                  <div class="btn-group btn-group-justified" id="form-mode-buttons" role="group">
+                    <!-- <button type="button" id="clear_pms_field" class="btn btn-default" data-key-method="cancel"  style="width:45%">
+                          <i class="fa fa-trash-o"></i>&nbsp; Clear
+                    </button> -->
+                    <button type="button" id="apply_product_changes" class="btn btn-primary" data-key-method="ok" style="width:53%;margin-right: 2px;">
+                           <i class="fa fa-save"></i>&nbsp; Apply Changes
+                    </button>
+                  </div>
+              </div>
+        </div>
+      </div>
+    </div>
+</div>
+<!-- modal [product changes]-->
+
 <!-- ./wrapper -->
 <div class="progress_mask">
     <div class="progress_container">
@@ -414,6 +531,25 @@
         </div>
     </div>
 </div>
+
+<!-- modal [product changes] -->
+<div class="modal fade" id="export_product_loader" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-sm" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+        </div>
+        <div class="modal-body">
+            <h4>Please wait while fetching data...</h4>
+        </div><!-- body -->
+        <div class="modal-footer">
+              <div id="footer">
+                  
+              </div>
+        </div>
+      </div>
+    </div>
+</div>
+<!-- modal [product changes]-->
 
 <!-- jQuery 3 -->
 <script src="<?php echo base_url(); ?>assets/bower_components/jquery/dist/jquery.min.js"></script>

@@ -82,37 +82,42 @@ $y = 42;
 $counter = 1;
 //$meals_possold = 0;
 foreach($kit as $ind => $row){
-	$pdf->SetFont('helvetica', '', 12);
-	$pdf->writeHTMLCell(50, 0, 5, $y, $row["product_code"], 0, 1, 0, 'top', '');
-	$pdf->writeHTMLCell(100, 0, 55, $y, $row["description"], 0, 1, 0, 'top', '');
-	$pdf->writeHTMLCell(20, 0, 155, $y, $row["price"], 0, 1, 0, 'top', '');
 
-	if(isset($row["parent"])){
-		$y += 5;
-		$pdf->SetFont('helvetica', '', 9);
-		$pdf->writeHTMLCell(53, 0, 8, $y, "KIT CODE", 0, 1, 0, 'top', '');
-		$pdf->writeHTMLCell(100, 0, 58, $y, "KIT DESCRIPTION", 0, 1, 0, 'top', '');
-		$pdf->writeHTMLCell(20, 0, 158, $y, "QUANTITY", 0, 1, 0, 'top', '');
-			foreach($row["parent"] as $pind => $prow) {
-				$pdf->SetFont('helvetica', '', 8);
-				$y += 5;
-				$pdf->writeHTMLCell(53, 0, 8, $y, $prow["parent_id"], 0, 1, 0, 'top', '');
-				$pdf->writeHTMLCell(100, 0, 58, $y, $prow["description"], 0, 1, 0, 'top', '');
-				$pdf->writeHTMLCell(20, 0, 158, $y, $prow["quantity"], 0, 1, 0, 'top', '');
-			}
+	if(isset($row["product_code"])){
+
+		$pdf->SetFont('helvetica', '', 12);
+		$pdf->writeHTMLCell(50, 0, 5, $y, $row["product_code"], 0, 1, 0, 'top', '');
+		$pdf->writeHTMLCell(100, 0, 55, $y, $row["description"], 0, 1, 0, 'top', '');
+		$pdf->writeHTMLCell(20, 0, 155, $y, $row["price"], 0, 1, 0, 'top', '');
+
+		if(isset($row["parent"])){
+			$y += 5;
+			$pdf->SetFont('helvetica', '', 9);
+			$pdf->writeHTMLCell(53, 0, 8, $y, "KIT CODE", 0, 1, 0, 'top', '');
+			$pdf->writeHTMLCell(100, 0, 58, $y, "KIT DESCRIPTION", 0, 1, 0, 'top', '');
+			$pdf->writeHTMLCell(20, 0, 158, $y, "QUANTITY", 0, 1, 0, 'top', '');
+				foreach($row["parent"] as $pind => $prow) {
+					$pdf->SetFont('helvetica', '', 8);
+					$y += 5;
+					$pdf->writeHTMLCell(53, 0, 8, $y, $prow["parent_id"], 0, 1, 0, 'top', '');
+					$pdf->writeHTMLCell(100, 0, 58, $y, $prow["description"], 0, 1, 0, 'top', '');
+					$pdf->writeHTMLCell(20, 0, 158, $y, $prow["quantity"], 0, 1, 0, 'top', '');
+				}
+		}
+
+	//	$meals_possold += $row["pos_total"];
+		$y += 7;
+		if($counter >= 10){
+			$pdf->AddPage();
+			$y = 42;
+			$counter = 1;
+		}else{
+			$counter++;
+		}
+
+		$pdf->writeHTMLCell(200, 0, 3, $y, "<hr />", 0, 1, 0, 'top', '');
+	
 	}
-
-//	$meals_possold += $row["pos_total"];
-	$y += 7;
-	if($counter >= 10){
-		$pdf->AddPage();
-		$y = 42;
-		$counter = 1;
-	}else{
-		$counter++;
-	}
-
-	$pdf->writeHTMLCell(200, 0, 3, $y, "<hr />", 0, 1, 0, 'top', '');
 }
 
 $pdf->SetFont('helvetica', 'B', 15);
