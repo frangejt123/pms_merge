@@ -10,7 +10,7 @@ class ModDailyinventorydetail extends CI_Model
 	private $TABLE = "daily_inventory_detail",
 		$FIELDS = array(
 			"id" => "daily_inventory_detail.id",
-			"period_id" => "daily_inventory_detail.period_id",
+			"period_id" => "daily_inventory_detail.daily_inventory_id",
 			"rawmat_id" => "daily_inventory_detail.rawmat_id",
 			"qty" => "daily_inventory_detail.qty"
 		);
