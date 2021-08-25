@@ -1,18 +1,20 @@
 <?php
 session_start();
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
-class Rawmaterial extends CI_Controller {
+class Rawmaterial extends CI_Controller
+{
 	public function index()
 	{
-		if(isset($_SESSION["rgc_username"])){
+		if (isset($_SESSION["rgc_username"])) {
 			$this->load->view('rawmaterial');
-		}else{
+		} else {
 			$this->load->view('login');
 		}
 	}
 
-	public function getAll(){
+	public function getAll()
+	{
 		$this->load->model('modRawmaterial', "", TRUE);
 		$param = $this->input->post(NULL, "true");
 
@@ -32,7 +34,8 @@ class Rawmaterial extends CI_Controller {
 		echo json_encode($res);
 	}
 
-	public function getType(){
+	public function getType()
+	{
 		$this->load->model('modRawmaterial', "", TRUE);
 		$this->load->model('modRawmaterialtype', "", TRUE);
 		$param = $this->input->post(NULL, "true");
@@ -53,7 +56,8 @@ class Rawmaterial extends CI_Controller {
 		echo json_encode($res);
 	}
 
-	public function insert(){
+	public function insert()
+	{
 		$this->load->model('modRawmaterial', "", TRUE);
 		$param = $this->input->post(NULL, "true");
 		$result = $this->modRawmaterial->insert($param);
@@ -61,7 +65,8 @@ class Rawmaterial extends CI_Controller {
 		echo json_encode($result);
 	}
 
-	public function update(){
+	public function update()
+	{
 		$this->load->model('modRawmaterial', "", TRUE);
 		$param = $this->input->post(NULL, "true");
 		$result = $this->modRawmaterial->update($param);
@@ -69,7 +74,8 @@ class Rawmaterial extends CI_Controller {
 		echo json_encode($result);
 	}
 
-	public function delete(){
+	public function delete()
+	{
 		$param = $this->input->post(NULL, TRUE);
 		$this->load->model('modRawmaterial', "", TRUE);
 
@@ -77,7 +83,8 @@ class Rawmaterial extends CI_Controller {
 		echo json_encode($res);
 	}
 
-	public function checkcode(){
+	public function checkcode()
+	{
 		$param = $this->input->post(NULL, TRUE);
 		$this->load->model('modRawmaterial', "", TRUE);
 		$param["itemcode"] = ucwords($param["itemcode"]);
@@ -85,39 +92,38 @@ class Rawmaterial extends CI_Controller {
 		$res = $this->modRawmaterial->checkcode($param)->num_rows();
 		echo $res;
 	}
-	
-	public function savetypechanges(){
+
+	public function savetypechanges()
+	{
 		$this->load->model('modRawmaterialtype', "", TRUE);
 
 		$param = $this->input->post(NULL, TRUE);
 		$err = 0;
-		foreach($param as $ind => $row){
+		foreach ($param as $ind => $row) {
 			$row["description"] = $row["value"];
 			$param[$ind]["description"] = $row["value"];
-			$res;
-			if($row["method"] == "new"){
+			$res = [];
+			if ($row["method"] == "new") {
 				$res = $this->modRawmaterialtype->insert($row);
 				$param[$ind]["id"] = $res["id"];
-			}else if($row["method"] == "edit"){
+			} else if ($row["method"] == "edit") {
 				$res = $this->modRawmaterialtype->update($row);
-			}else{
+			} else {
 				$res = $this->modRawmaterialtype->delete($row);
 			}
-			if(!$res){
+			if (!$res) {
 				$err++;
 			}
 		}
 
 		$result = array();
-		if($err == 0){
+		if ($err == 0) {
 			$result["success"] = true;
 			$result["data"] = $param;
-		}else{
+		} else {
 			$result["success"] = false;
 		}
 
 		print_r(json_encode($result));
-
-
 	}
 }
