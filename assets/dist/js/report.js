@@ -1,4 +1,5 @@
 $(document).ready(function () {
+	$("#li-report").addClass("active");
 	var docheight = $(window).height();
 
 	$("div#iframecontainer").html(

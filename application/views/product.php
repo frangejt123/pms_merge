@@ -77,41 +77,7 @@
 	<aside class="main-sidebar">
 		<!-- sidebar: style can be found in sidebar.less -->
 		<section class="sidebar">
-			<ul class="sidebar-menu" data-widget="tree">
-				<li>
-					<a href="<?php echo base_url(); ?>index.php/dashboard">
-						<i class="fa fa-dashboard"></i> <span>Dashboard</span>
-					</a>
-				</li>
-				<li>
-					<a href="<?php echo base_url(); ?>index.php/weekview">
-						<i class="fa fa-calendar"></i> <span>Weekly Data</span>
-					</a>
-				</li>
-				<li>
-					<a href="<?php echo base_url(); ?>index.php/productmovement">
-						<i class="fa fa-bar-chart"></i> <span>Product Movement</span>
-					</a>
-				</li>
-				<li>
-					<a href="<?php echo base_url(); ?>index.php/report">
-						<i class="fa fa-file-text-o"></i> <span>Reports</span>
-					</a>
-				</li>
-				<li class="header"></li>
-				<li class="active"><a href="#"><i class="fa fa-cubes"></i> <span>Product</span></a></li>
-				<li><a href="<?php echo base_url(); ?>index.php/uom"><i class="fa fa-sliders"></i> <span>Unit of Measurement</span></a></li>
-				<li><a href="<?php echo base_url(); ?>index.php/branch"><i class="fa fa-home"></i> <span>Branch</span></a></li>
-				<?php
-				if($_SESSION["rgc_access_level"] == 0){
-					echo '<li><a href="'.base_url().'index.php/rawmaterial"><i class="fa fa-asterisk"></i> <span>Raw Materials</span></a></li>';
-					echo '<li><a href="'.base_url().'index.php/conversion"><i class="fa fa-balance-scale"></i> <span>Conversion</span></a></li>';
-					echo '<li><a href="'.base_url().'index.php/userlist"><i class="fa fa-users"></i> <span>User List</span></a></li>';
-				}
-				?>
-				<li class="header"></li>
-				<li><a href="#" id="changepass_btn"><i class="fa fa-key"></i> <span>Change Password</span></a></li>
-			</ul>
+			<?php $this->view('sidebar/menu') ?>
 		</section>
 		<!-- /.sidebar -->
 	</aside>
@@ -263,20 +229,20 @@
                   <select class="select2 js-states form-control" id="detail_product_uom" style="width: 100%">
                   </select>
                 </div>
-
+                
                 <div class="form-group">
                   <label for="detail_product_price">Price</label>
                   <input type="text" class="form-control" id="detail_product_price">
                 </div>
 
-				<div class="form-group">
-					<!--                  <label>Parent</label>-->
-					<!--                  <select class="select2 js-states form-control" id="parent_id">-->
-					<!--                  </select>-->
-					<button type="button" class="btn btn-success kit_composition_btn" style="width:100%">
-						<i class="fa fa-cogs"></i>&nbsp; Kit Composition
-					</button>
-				</div>
+                <div class="form-group">
+                  <!--                  <label>Parent</label>-->
+                  <!--                  <select class="select2 js-states form-control" id="parent_id">-->
+                  <!--                  </select>-->
+                  <button type="button" class="btn btn-success kit_composition_btn" style="width:100%">
+                    <i class="fa fa-cogs"></i>&nbsp; Kit Composition
+                  </button>
+                </div>
 
              </div>
           </form>
@@ -297,7 +263,6 @@
     </div>
 </div>
 <!-- modal -->
-
 
 <!-- modal [kit composition] -->
 <div class="modal fade" id="kit_composition_modal" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
@@ -559,6 +524,7 @@
 <script>
   $.widget.bridge('uibutton', $.ui.button);
   var baseurl = '<?php echo base_url(); ?>'+'index.php';
+	var access_level = '<?php echo $_SESSION["rgc_access_level"]; ?>';
 </script>
 <!-- Bootstrap 3.3.7 -->
 <script src="<?php echo base_url(); ?>assets/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>

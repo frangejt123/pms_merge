@@ -3,27 +3,26 @@
 if (!defined('BASEPATH'))
 	exit('No direct script access allowed');
 
-class ModRawmaterial extends CI_Model {
+class ModDailyinventorydetail extends CI_Model
+{
 
-	public $NAMESPACE = "raw_material";
-	private $TABLE = "raw_material",
+	public $NAMESPACE = "daily_inventory_detail";
+	private $TABLE = "daily_inventory_detail",
 		$FIELDS = array(
-		"id" => "raw_material.id",
-		"itemcode" => "raw_material.itemcode",
-		"description" => "raw_material.description",
-		"type_id" => "raw_material.type_id",
-		"uom" => "raw_material.uom"
-	);
+			"id" => "daily_inventory_detail.id",
+			"period_id" => "daily_inventory_detail.period_id",
+			"rawmat_id" => "daily_inventory_detail.rawmat_id",
+			"qty" => "daily_inventory_detail.qty"
+		);
 
-	function __construct() {
+	function __construct()
+	{
 		// Call the Model constructor
 		parent::__construct();
 	}
 
-	function getAll($param) {
-		$this->FIELDS["uom_description"] = "uom.description";
-		$this->FIELDS["uom_abbr"] = "uom.abbreviation";
-		$this->FIELDS["type_description"] = "raw_material_type.description";
+	function getAll($param)
+	{
 		$tablefield = "";
 
 		foreach ($this->FIELDS as $alias => $field) {
@@ -32,22 +31,21 @@ class ModRawmaterial extends CI_Model {
 			}
 			//Construct table field selection
 			$tablefield .= $field . " AS `" . $alias . "`";
-			if($param)
+			if ($param)
 				if (array_key_exists($alias, $param)) {
 					$this->db->where($field, $param[$alias]);
 				}
 		}
 
 		$this->db->select($tablefield);
-		$this->db->from("raw_material");
-		$this->db->join('uom', 'uom.id = raw_material.uom');
-		$this->db->join('raw_material_type', 'raw_material_type.id = raw_material.type_id');
+		$this->db->from("daily_inventory_detail");
 		$query = $this->db->get();
 
 		return $query;
 	}
 
-	function insert($param) {
+	function insert($param)
+	{
 		$result = array();
 		$data = array();
 
@@ -59,7 +57,7 @@ class ModRawmaterial extends CI_Model {
 			}
 		}
 
-		if ($this->db->insert('raw_material', $data)) {
+		if ($this->db->insert('daily_inventory_detail', $data)) {
 			//$result_row = $this->db->query("SELECT LAST_INSERT_ID() AS `id`")->result_object();
 			$result["id"] = $this->db->insert_id();
 			$result["success"] = true;
@@ -72,11 +70,12 @@ class ModRawmaterial extends CI_Model {
 		return $result;
 	}
 
-	function update($param) {
+	function update($param)
+	{
 
 		$result = array();
 		$data = array();
-//        $param["id"] = $param["_server_id"];
+		//        $param["id"] = $param["_server_id"];
 		$id = $param["id"];
 
 		foreach ($this->FIELDS as $alias => $field) {
@@ -86,7 +85,7 @@ class ModRawmaterial extends CI_Model {
 
 		$this->db->where($this->FIELDS['id'], $id);
 
-		if ($this->db->update('raw_material', $data)) {
+		if ($this->db->update('daily_inventory_detail', $data)) {
 			$result["success"] = true;
 		} else {
 			$result["success"] = false;
@@ -98,12 +97,13 @@ class ModRawmaterial extends CI_Model {
 	}
 
 
-	function delete($param) {
+	function delete($param)
+	{
 
 		$result = array();
 		$this->db->where($this->FIELDS['id'], $param["id"]);
 
-		if ($this->db->delete('raw_material')) {
+		if ($this->db->delete('daily_inventory_detail')) {
 			$result["id"] = $param["id"];
 			$result["success"] = true;
 		} else {
@@ -115,13 +115,14 @@ class ModRawmaterial extends CI_Model {
 		return $result;
 	}
 
-	function checkcode($param) {
+	function checkcode($param)
+	{
 		$this->db->select("id");
-		$this->db->from("raw_material");
-		if(isset($param["id"])){
-			$this->db->where('raw_material.id !=', $param["id"]);
+		$this->db->from("daily_inventory_detail");
+		if (isset($param["id"])) {
+			$this->db->where('daily_inventory_detail.id !=', $param["id"]);
 		}
-		$this->db->where('UCASE(raw_material.itemcode) =', $param["itemcode"]);
+		$this->db->where('UCASE(daily_inventory_detail.itemcode) =', $param["itemcode"]);
 		$query = $this->db->get();
 
 		return $query;

@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>Ribshack | Raw Material</title>
+	<title>Ribshack | Daily Inventory</title>
 	<!-- Tell the browser to be responsive to screen width -->
 	<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 	<!-- Bootstrap 3.3.7 -->
@@ -89,19 +89,8 @@
 		<div class="content-wrapper">
 			<!-- Main content -->
 			<section class="content">
-
-				<?php
-				$cls = '';
-				if ($_SESSION["rgc_access_level"] == 0) {
-					$cls = 'edit';
-				?>
-					<span class="pull-right">
-						<button type="button" class="btn btn-info" id="new_rm_btn"><i class="fa fa-plus"></i>&nbsp; Add Raw Material</button>
-					</span>
-					<span class="btn-separator pull-right"></span>
-				<?php } ?>
 				<span class="pull-right">
-					<button type="button" class="btn btn-warning" id="print_raw_mat"><i class="fa fa-print"></i>&nbsp; Print</button>&nbsp; &nbsp;
+					<button type="button" class="btn btn-info" id="new_daily_inv_btn"><i class="fa fa-plus"></i>&nbsp; Add Daily Inventory</button>
 				</span>
 				<div class="clearfix"></div>
 				<br />
@@ -109,16 +98,16 @@
 					<div class="col-lg-12">
 						<div class="box">
 							<div class="box-body no-padding">
-								<table class="table table-hover" id="rawmaterialtable">
+								<table class="table table-hover" id="dailyinv_table">
 									<thead>
 										<tr>
-											<th>Item Code</th>
-											<th>Description</th>
-											<th>Type</th>
-											<th>Uom</th>
+											<th>Period</th>
+											<th>Branch</th>
+											<th>User</th>
+											<th>Status</th>
 										</tr>
 									</thead>
-									<tbody class='<?php echo $cls; ?>'>
+									<tbody>
 									</tbody>
 								</table>
 							</div>
@@ -131,45 +120,44 @@
 		<!-- /.content-wrapper -->
 
 		<!-- modal [new product] -->
-		<div class="modal fade" id="new_rm_modal" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+		<div class="modal fade" id="new_daily_inv_modal" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
 			<div class="modal-dialog" role="document">
 				<div class="modal-content">
 					<div class="modal-header">
 						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 							<span aria-hidden="true">×</span></button>
 						<h4 class="modal-title"><span style="border-radius: 2px; padding: 6px;
-            border: 1px solid #008d4c; background-color: #00a65a; color: #FFF" ; class="fa fa-sliders"></span> &nbsp; <b>New Raw Material</b></h4>
+            border: 1px solid #008d4c; background-color: #00a65a; color: #FFF" ; class="fa fa-sliders"></span> &nbsp; <b>Daily Inventory</b></h4>
 					</div>
 					<div class="modal-body">
-						<form role="form" id="newRMForm">
-							<div class="box-body">
-								<div class="form-group">
-									<label for="itemcode">Item Code</label>
-									<input type="text" class="form-control" id="rm_itemcode">
-								</div>
+						<form role="form" id="newDIForm">
 
-								<div class="form-group">
-									<label for="uom_abbr">Description</label>
-									<input type="text" class="form-control" id="description">
-								</div>
-
-								<div class="form-group">
-									<label>Type</label>
-									<div class="input-group">
-										<select class="select2 js-states form-control" id="rm_type">
-										</select>
-										<div class="input-group-addon input-group-button">
-											<button type="button" id="view_type_btn" class="btn btn-default btn-sm">
-												<i class="fa fa-list"></i>
-											</button>
+							<div class="form-group">
+								<div id="datepicker">
+									<div class="input-group" style="width: 100%">
+										<div class="input-group-addon">
+											<div class="input-group-text">Period Date</div>
 										</div>
+										<input type="text" class="form-control datepicker" id="period_date" value="">
 									</div>
 								</div>
+							</div>
 
-								<div class="form-group">
-									<label>Unit of Measurement</label>
-									<select class="select2 js-states form-control" id="rm_uom">
-									</select>
+							<div class="box-body daily_inv_data">
+								<div class="row">
+									<div class="col-lg-12">
+										<table class="table" id="daily_inv_rawmat">
+											<thead>
+												<tr>
+													<th>Code</th>
+													<th>Description</th>
+													<th>Qty</th>
+												</tr>
+											</thead>
+											<tbody>
+											</tbody>
+										</table>
+									</div>
 								</div>
 							</div>
 						</form>
@@ -177,10 +165,7 @@
 					<div class="modal-footer">
 						<div id="footer">
 							<div class="btn-group btn-group-justified" id="form-mode-buttons" role="group">
-								<button type="button" id="clear_new_uom" class="btn btn-default" data-key-method="cancel" style="width:49%">
-									<i class="fa fa-undo"></i>&nbsp; Clear
-								</button>
-								<button type="button" id="newRM_submitBtn" class="btn btn-primary" data-key-method="ok" style="width:49%">
+								<button type="button" id="newDI_submitBtn" class="btn btn-primary" data-key-method="ok" style="width:49%">
 									<i class="fa fa-save"></i>&nbsp; Save
 								</button>
 							</div>
@@ -192,45 +177,44 @@
 		<!-- modal -->
 
 		<!-- modal [product_detail] -->
-		<div class="modal fade" id="rm_detail_modal" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+		<div class="modal fade" id="daily_inv_detail_modal" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
 			<div class="modal-dialog" role="document">
 				<div class="modal-content">
 					<div class="modal-header">
 						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 							<span aria-hidden="true">×</span></button>
 						<h4 class="modal-title"><span style="border-radius: 2px; padding: 6px;
-            border: 1px solid #008d4c; background-color: #00a65a; color: #FFF" ; class="fa fa-sliders"></span> &nbsp; <b>Raw Material Detail</b></h4>
+            border: 1px solid #008d4c; background-color: #00a65a; color: #FFF" ; class="fa fa-sliders"></span> &nbsp; <b>Daily Inventory</b></h4>
 					</div>
 					<div class="modal-body">
-						<form role="form" id="detailRMForm">
-							<div class="box-body">
-								<div class="form-group">
-									<label for="update_itemcode">Item Code</label>
-									<input type="text" class="form-control" id="update_rm_itemcode">
-								</div>
+						<form role="form" id="DIForm">
 
-								<div class="form-group">
-									<label for="update_description">Description</label>
-									<input type="text" class="form-control" id="update_description">
-								</div>
-
-								<div class="form-group">
-									<label>Type</label>
-									<div class="input-group">
-										<select class="select2 js-states form-control" id="update_rm_type">
-										</select>
-										<div class="input-group-addon input-group-button">
-											<button type="button" id="view_type_btn" class="btn btn-default btn-sm">
-												<i class="fa fa-list"></i>
-											</button>
+							<div class="form-group">
+								<div id="datepicker">
+									<div class="input-group" style="width: 100%">
+										<div class="input-group-addon">
+											<div class="input-group-text">Period Date</div>
 										</div>
+										<input type="text" class="form-control datepicker" id="period_date_detail" value="">
 									</div>
 								</div>
+							</div>
 
-								<div class="form-group">
-									<label>Unit of Measurement</label>
-									<select class="select2 js-states form-control" id="update_rm_uom">
-									</select>
+							<div class="box-body daily_inv_data">
+								<div class="row">
+									<div class="col-lg-12">
+										<table class="table" id="daily_inv_detail_rawmat">
+											<thead>
+												<tr>
+													<th>Code</th>
+													<th>Description</th>
+													<th>Qty</th>
+												</tr>
+											</thead>
+											<tbody>
+											</tbody>
+										</table>
+									</div>
 								</div>
 							</div>
 						</form>
@@ -238,11 +222,14 @@
 					<div class="modal-footer">
 						<div id="footer">
 							<div class="btn-group btn-group-justified" id="form-mode-buttons" role="group">
-								<button type="button" id="delete_rm" class="btn btn-danger" style="width:49%">
+								<button type="button" id="delete_di" class="btn btn-danger" style="width:33%">
 									<i class="fa fa-trash-o"></i>&nbsp; Delete
 								</button>
-								<button type="button" id="updateRM_submitBtn" class="btn btn-primary" data-key-method="ok" style="width:49%">
-									<i class="fa fa-save"></i>&nbsp; Save
+								<button type="button" id="approve_di" class="btn btn-success" style="width:33%">
+									<i class="fa fa-thumbs-up"></i>&nbsp; Approve
+								</button>
+								<button type="button" id="updateDI_submitBtn" class="btn btn-primary" data-key-method="ok" style="width:33%">
+									<i class="fa fa-save"></i>&nbsp; Update
 								</button>
 							</div>
 						</div>
@@ -252,87 +239,35 @@
 		</div>
 		<!-- modal -->
 
-		<!-- modal [raw material type] -->
-		<div class="modal fade" id="raw_mat_modal" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-			<div class="modal-dialog" role="document">
+		<!-- approve confirm modal -->
+		<!-- Modal HTML -->
+		<div id="approve_confirm_modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+			<div class="modal-dialog modal-confirm">
 				<div class="modal-content">
 					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-							<span aria-hidden="true">×</span></button>
-						<h4 class="modal-title"><span style="border-radius: 2px; padding: 6px; border: 1px solid #008d4c; background-color: #00a65a; color: #FFF" ; class="fa fa-cogs"></span> &nbsp; <b>Raw Material Type</b></h4>
+						<h5 class="modal-title">
+							<span class="fa fa-thumbs-up"></span> Approve Inventory
+						</h5>
 					</div>
 					<div class="modal-body">
-						<form role="form" id="rawmaterialForm">
-							<div class="box-body">
-								<div class="row">
-									<div class="col-sm-12">
-										<div class="form-group">
-											<label for="type_desc">Description</label>
-											<input type="text" class="form-control" id="type_desc">
-										</div>
-									</div>
-								</div>
-								<div class="row" id="addbtn_row">
-									<div class="col-sm-12">
-										<button type="button" id="add_rawmat_type" class="btn btn-primary" data-key-method="ok" style="width:100%">
-											<i class="fa fa-plus"></i>&nbsp; Add
-										</button>
-									</div>
-								</div>
-								<div class="row">
-									<div class="col-sm-6">
-										<button type="button" id="cancel_rawmat_type" class="btn btn-default updatebtn_row" data-key-method="ok" style="width:100%">
-											<i class="fa fa-times"></i>&nbsp; Cancel
-										</button>
-									</div>
-
-									<div class="col-sm-6">
-										<button type="button" id="update_rawmat_type" class="btn btn-primary updatebtn_row" data-key-method="ok" style="width:100%">
-											<i class="fa fa-pencil"></i>&nbsp; Update
-										</button>
-									</div>
-								</div>
-								<div class="row">
-									<table class="table table-hover" id="raw_material_type_table">
-										<thead>
-											<tr>
-												<th>Description</th>
-											</tr>
-										</thead>
-										<tbody>
-										</tbody>
-									</table>
-								</div>
-							</div>
-						</form>
-					</div><!-- body -->
+						<p>Are you sure you want to approve this record?
+							This action cannot be undone.</p>
+					</div>
 					<div class="modal-footer">
 						<div class="row">
 							<div class="col-xs-5">
-								<div id="opt-btn">
-
-									<a href="#" class="btn btn-danger pull-left" id="delete_rawmattype_selection">
-										<i class="fa fa-trash"></i> Delete
-									</a>
-									<a href="#" class="btn btn-default pull-left hidden-btn" id="rawmat_undo_changes">
-										<i class="fa fa-undo"></i> Undo
-									</a>
-								</div>
 							</div>
 							<div class="col-xs-7">
-								<!-- <a href="#" class="btn btn-default" data-dismiss="modal">
-								<i class="fa fa-remove"></i> Cancel
-							</a> -->
-								<a href="#" class="btn btn-success" id="save_rawmat_type">
-									<i class="fa fa-save"></i> Save
-								</a>
+								<a href="#" class="btn btn-info" data-dismiss="modal">Cancel</a>
+								<a href="#" class="btn btn-success" id="confirm_approve_btn">Approve</a>
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-		<!-- modal -->
+		<!-- approve confirm modal -->
+
 
 		<!-- confirm modal -->
 		<!-- Modal HTML -->
@@ -374,7 +309,7 @@
 	<div class="progress_mask">
 		<div class="progress_container">
 			<div class="progress progress-md active">
-				<div class="progress-bar progress-bar-warning progress-bar-striped" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+				<div class="progress-bar progress-bar-primary progress-bar-striped" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
 					<span class="sr-only">100% Complete</span>
 				</div>
 			</div>
@@ -409,7 +344,7 @@
 	<!-- AdminLTE for demo purposes -->
 	<script src="<?php echo base_url(); ?>assets/dist/js/demo.js"></script>
 	<script src="<?php echo base_url(); ?>assets/dist/js/app.js"></script>
-	<script src="<?php echo base_url(); ?>assets/dist/js/rawmaterial.js"></script>
+	<script src="<?php echo base_url(); ?>assets/dist/js/dailyinv.js"></script>
 	<script src="<?php echo base_url(); ?>assets/dist/js/select.min.js"></script>
 </body>
 

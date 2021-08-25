@@ -78,41 +78,7 @@
 	<!-- Left side column. contains the logo and sidebar -->
 	<aside class="main-sidebar"><!-- sidebar: style can be found in sidebar.less -->
 		<section class="sidebar">
-			<ul class="sidebar-menu" data-widget="tree">
-				<li class="active">
-					<a href="#">
-						<i class="fa fa-dashboard"></i> <span>Dashboard</span>
-					</a>
-				</li>
-				<li>
-					<a href="<?php  echo base_url();  ?>index.php/weekview">
-						<i class="fa fa-calendar"></i> <span>Weekly Data</span>
-					</a>
-				</li>
-				<li>
-					<a href="<?php echo base_url(); ?>index.php/productmovement">
-						<i class="fa fa-bar-chart"></i> <span>Product Movement</span>
-					</a>
-				</li>
-				<li>
-					<a href="<?php echo base_url(); ?>index.php/report">
-						<i class="fa fa-file-text-o"></i> <span>Reports</span>
-					</a>
-				</li>
-				<li class="header"></li>
-				<li><a href="<?php echo base_url(); ?>index.php/product"><i class="fa fa-cubes"></i> <span>Product</span></a></li>
-				<li><a href="<?php echo base_url(); ?>index.php/uom"><i class="fa fa-sliders"></i> <span>Unit of Measurement</span></a></li>
-				<li><a href="<?php echo base_url(); ?>index.php/branch"><i class="fa fa-home"></i> <span>Branch</span></a></li>
-				<?php
-				if($_SESSION["rgc_access_level"] == 0){
-					echo '<li><a href="'.base_url().'index.php/rawmaterial"><i class="fa fa-asterisk"></i> <span>Raw Materials</span></a></li>';
-					echo '<li><a href="'.base_url().'index.php/conversion"><i class="fa fa-balance-scale"></i> <span>Conversion</span></a></li>';
-					echo '<li><a href="'.base_url().'index.php/userlist"><i class="fa fa-users"></i> <span>User List</span></a></li>';
-				}
-				?>
-				<li class="header"></li>
-				<li><a href="#" id="changepass_btn"><i class="fa fa-key"></i> <span>Change Password</span></a></li>
-			</ul>
+			<?php $this->view('sidebar/menu') ?>
 		</section>
 		<!-- /.sidebar -->
 	</aside>
@@ -120,6 +86,28 @@
 	<!-- Content Wrapper. Contains page content -->
 
 		<div class="content-wrapper">
+
+		<section class="content-header">
+			<div class="row">
+				<div class="col-md-6">
+					<?php
+						$cls = "";
+						$style = "";
+						if($_SESSION["rgc_access_level"] == 0){
+							echo '<span class="pull-left">
+									<div class="form-group" id="period_branch_form">
+										<select class="select2 js-states form-control" style="width: 185px;" id="period_branch">
+										</select>
+									</div>
+									</span>';
+							$cls = " disabled";
+							$style = "margin-left: 16px;";
+						}
+					?>
+				</div>
+			</div>
+		</section>
+
 			<section class="content">
 				<div class="row">
 					<div class="col-md-4">

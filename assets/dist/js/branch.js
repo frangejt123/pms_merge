@@ -1,33 +1,48 @@
-$(document).ready(function(){
+$(document).ready(function () {
+	$("#li-branch").addClass("active");
 	/* populate branch list */
 	$.ajax({
 		method: "POST",
-		url: baseurl+"/branch/getAll",
-		success: function(res){
+		url: baseurl + "/branch/getAll",
+		success: function (res) {
 			var res = JSON.parse(res);
 			var tr = "";
 
-			$.each(res, function(ind, row){
-				tr += '<tr id="'+row["id"]+'">' +
-						'<td>'+row["branch_code"]+'</td>' +
-						'<td>'+row["branch_name"]+'</td>' +
-						'<td>'+row["address"]+'</td>' +
-						'<td>'+row["tin"]+'</td>' +
-						'<td>'+row["operated_by"]+'</td>' +
-						'<td>'+row["pos_count"]+'</td>' +
-						'</tr>';
+			$.each(res, function (ind, row) {
+				tr +=
+					'<tr id="' +
+					row["id"] +
+					'">' +
+					"<td>" +
+					row["branch_code"] +
+					"</td>" +
+					"<td>" +
+					row["branch_name"] +
+					"</td>" +
+					"<td>" +
+					row["address"] +
+					"</td>" +
+					"<td>" +
+					row["tin"] +
+					"</td>" +
+					"<td>" +
+					row["operated_by"] +
+					"</td>" +
+					"<td>" +
+					row["pos_count"] +
+					"</td>" +
+					"</tr>";
 			});
 
 			$("table#branchtable tbody").html(tr);
-		}
-	})
+		},
+	});
 
-
-	$("button#new_branch_btn").on("click", function(){
+	$("button#new_branch_btn").on("click", function () {
 		$("div#new_branch_modal").modal("show");
 	});
 
-	$("#newbranch_submitBtn").on("click", function(){
+	$("#newbranch_submitBtn").on("click", function () {
 		var branch_code = $("input#branch_code").val();
 		var branch_name = $("input#branch_name").val();
 		var address = $("#address").val();
@@ -46,24 +61,27 @@ $(document).ready(function(){
 
 		var inputs = $("form#newbranchForm").find("input");
 		var empty = 0;
-		$.each(inputs, function(ind, row){
+		$.each(inputs, function (ind, row) {
 			$(this).removeClass("emptyField");
-			if($(this).val() == ""){
+			if ($(this).val() == "") {
 				$(this).addClass("emptyField");
 				empty++;
 			}
 		});
 
-		if(empty > 0){
-			$.bootstrapGrowl("&nbsp; &nbsp; <span class='fa fa-exclamation-circle' style='font-size: 20px'></span> &nbsp; Please fill in required fields.", {
-				type: "danger",
-				width: 300
-			});
+		if (empty > 0) {
+			$.bootstrapGrowl(
+				"&nbsp; &nbsp; <span class='fa fa-exclamation-circle' style='font-size: 20px'></span> &nbsp; Please fill in required fields.",
+				{
+					type: "danger",
+					width: 300,
+				}
+			);
 			return;
 		}
 		$.ajax({
 			method: "POST",
-			data: {branch_code},
+			data: { branch_code },
 			url: baseurl + "/branch/checkcode",
 			success: function (res) {
 				if (res > 0) {
@@ -72,37 +90,55 @@ $(document).ready(function(){
 					$.ajax({
 						method: "POST",
 						data: data,
-						url: baseurl+"/branch/insert",
-						success: function(res){
+						url: baseurl + "/branch/insert",
+						success: function (res) {
 							var res = JSON.parse(res);
-							if(res["success"]){
-								var tr = '<tr id="'+res["id"]+'">' +
-									'<td>'+branch_code+'</td>' +
-									'<td>'+branch_name+'</td>' +
-									'<td>'+address+'</td>' +
-									'<td>'+tin+'</td>' +
-									'<td>'+operated_by+'</td>' +
-									'<td>'+pos_count+'</td>' +
-									'</tr>';
+							if (res["success"]) {
+								var tr =
+									'<tr id="' +
+									res["id"] +
+									'">' +
+									"<td>" +
+									branch_code +
+									"</td>" +
+									"<td>" +
+									branch_name +
+									"</td>" +
+									"<td>" +
+									address +
+									"</td>" +
+									"<td>" +
+									tin +
+									"</td>" +
+									"<td>" +
+									operated_by +
+									"</td>" +
+									"<td>" +
+									pos_count +
+									"</td>" +
+									"</tr>";
 
 								$("table#branchtable tbody").prepend(tr);
 								$("div#new_branch_modal").modal("hide");
 
-								$.bootstrapGrowl("&nbsp; &nbsp; <span class='fa fa-exclamation-circle' style='font-size: 20px'></span> &nbsp; Changes successfully saved!", {
-									type: "success",
-									allow_dismiss: false,
-									width: 300
-								});
+								$.bootstrapGrowl(
+									"&nbsp; &nbsp; <span class='fa fa-exclamation-circle' style='font-size: 20px'></span> &nbsp; Changes successfully saved!",
+									{
+										type: "success",
+										allow_dismiss: false,
+										width: 300,
+									}
+								);
 							}
-						}
+						},
 					});
 				}
-			}
+			},
 		});
 	});
 
 	/* on row click */
-	$("table#branchtable tbody").on("click", "tr", function(){
+	$("table#branchtable tbody").on("click", "tr", function () {
 		var tds = $(this).find("td");
 		var id = $(this).attr("id");
 
@@ -124,7 +160,7 @@ $(document).ready(function(){
 		$("div#branch_detail_modal").modal("show");
 	});
 
-	$("#updatebranch_submitBtn").on("click", function(){
+	$("#updatebranch_submitBtn").on("click", function () {
 		var branch_code = $("input#update_branch_code").val();
 		var branch_name = $("input#update_branch_name").val();
 		var address = $("#update_address").val();
@@ -145,25 +181,28 @@ $(document).ready(function(){
 
 		var inputs = $("form#detailbranchForm").find("input");
 		var empty = 0;
-		$.each(inputs, function(ind, row){
+		$.each(inputs, function (ind, row) {
 			$(this).removeClass("emptyField");
-			if($(this).val() == ""){
+			if ($(this).val() == "") {
 				$(this).addClass("emptyField");
 				empty++;
 			}
 		});
 
-		if(empty > 0){
-			$.bootstrapGrowl("&nbsp; &nbsp; <span class='fa fa-exclamation-circle' style='font-size: 20px'></span> &nbsp; Please fill in required fields.", {
-				type: "danger",
-				width: 300
-			});
+		if (empty > 0) {
+			$.bootstrapGrowl(
+				"&nbsp; &nbsp; <span class='fa fa-exclamation-circle' style='font-size: 20px'></span> &nbsp; Please fill in required fields.",
+				{
+					type: "danger",
+					width: 300,
+				}
+			);
 			return;
 		}
 
 		$.ajax({
 			method: "POST",
-			data: {id, branch_code},
+			data: { id, branch_code },
 			url: baseurl + "/branch/checkcode",
 			success: function (res) {
 				if (res > 0) {
@@ -172,79 +211,107 @@ $(document).ready(function(){
 					$.ajax({
 						method: "POST",
 						data: data,
-						url: baseurl+"/branch/update",
-						success: function(res){
+						url: baseurl + "/branch/update",
+						success: function (res) {
 							var res = JSON.parse(res);
-							if(res["success"]){
-								var td = '<td>'+branch_code+'</td>' +
-									'<td>'+branch_name+'</td>' +
-									'<td>'+address+'</td>' +
-									'<td>'+tin+'</td>' +
-									'<td>'+operated_by+'</td>' +
-									'<td>'+pos_count+'</td>';
+							if (res["success"]) {
+								var td =
+									"<td>" +
+									branch_code +
+									"</td>" +
+									"<td>" +
+									branch_name +
+									"</td>" +
+									"<td>" +
+									address +
+									"</td>" +
+									"<td>" +
+									tin +
+									"</td>" +
+									"<td>" +
+									operated_by +
+									"</td>" +
+									"<td>" +
+									pos_count +
+									"</td>";
 
-								$("table#branchtable tbody tr#"+id).html(td);
+								$("table#branchtable tbody tr#" + id).html(td);
 								$("div#branch_detail_modal").modal("hide");
 
-								$.bootstrapGrowl("&nbsp; &nbsp; <span class='fa fa-exclamation-circle' style='font-size: 20px'></span> &nbsp; Changes successfully updated!", {
-									type: "success",
-									width: 300
-								});
+								$.bootstrapGrowl(
+									"&nbsp; &nbsp; <span class='fa fa-exclamation-circle' style='font-size: 20px'></span> &nbsp; Changes successfully updated!",
+									{
+										type: "success",
+										width: 300,
+									}
+								);
 							}
-						}
+						},
 					});
 				}
-			}
+			},
 		});
-
 	});
 
 	/*delete record*/
-	$("button#delete_branch").on("click", function(){
+	$("button#delete_branch").on("click", function () {
 		$("div#confirm_modal").modal("show");
 	});
 
-	$("a#confirm_delete_branch_btn").on("click", function(){
+	$("a#confirm_delete_branch_btn").on("click", function () {
 		var id = $("div#branch_detail_modal").data("id");
 
 		var datas = {
-			"id" : id
-		}
+			id: id,
+		};
 
 		$.ajax({
-			url: baseurl+"/branch/delete",
+			url: baseurl + "/branch/delete",
 			method: "POST",
 			data: datas,
-			success: function(data){
+			success: function (data) {
 				var data = JSON.parse(data);
-				if(data["success"]){
-					$.bootstrapGrowl("&nbsp; &nbsp; <span class='fa fa-check-circle' style='font-size: 20px'></span> &nbsp; Record successfully deleted.", {
-						type: "success",
-						width: 300
-					});
+				if (data["success"]) {
+					$.bootstrapGrowl(
+						"&nbsp; &nbsp; <span class='fa fa-check-circle' style='font-size: 20px'></span> &nbsp; Record successfully deleted.",
+						{
+							type: "success",
+							width: 300,
+						}
+					);
 
 					$("div#branch_detail_modal").modal("hide");
-					$("table#branchtable").find("tr#"+id).remove();
+					$("table#branchtable")
+						.find("tr#" + id)
+						.remove();
 				}
-
-			}
+			},
 		});
 
-		$('div#branch_detail_modal').on('hide.bs.modal', function () {
+		$("div#branch_detail_modal").on("hide.bs.modal", function () {
 			$("div#confirm_modal").modal("hide");
-			$('html, body').css({
-				overflow: 'hidden',
-				height: '100%'
+			$("html, body").css({
+				overflow: "hidden",
+				height: "100%",
 			});
 		});
 	});
 
-	$("#tin, #update_tin, #pos_count, #update_pos_count").on("keypress keyup blur",function (event) {
-		//this.value = this.value.replace(/[^0-9\.]/g,'');
-		$(this).val($(this).val().replace(/[^0-9\.]/g,''));
-		if ((event.which != 46 || $(this).val().indexOf('.') != -1) && (event.which < 48 || event.which > 57)) {
-			event.preventDefault();
+	$("#tin, #update_tin, #pos_count, #update_pos_count").on(
+		"keypress keyup blur",
+		function (event) {
+			//this.value = this.value.replace(/[^0-9\.]/g,'');
+			$(this).val(
+				$(this)
+					.val()
+					.replace(/[^0-9\.]/g, "")
+			);
+			if (
+				(event.which != 46 || $(this).val().indexOf(".") != -1) &&
+				(event.which < 48 || event.which > 57)
+			) {
+				event.preventDefault();
+			}
 		}
-	});
-
+	);
 });

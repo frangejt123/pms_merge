@@ -120,7 +120,6 @@ class Product extends CI_Controller {
 
 		$changes = [];
 		foreach($filedata['productlist'] as $ind => $row){
-			
 			$action = "";
 			if(array_key_exists($ind, $productdata)){
 				$db_data = $productdata[$row["product_code"]];
@@ -162,15 +161,17 @@ class Product extends CI_Controller {
 
 	public function applychanges(){
 		$this->load->model('modProduct', "", TRUE);
+		$this->load->model('modBranchPrice', "", TRUE);
 		$param = $this->input->post(NULL, "true");
+		$param = json_decode($param['data'], true);
 		$err = 0;
 		foreach($param as $ind => $row){
 			$res;
 			if($row["action"] == "INSERT"){
 				$row['data']['uom'] = '1';
-				$res = $this->modProduct->insert($row['data']);
+				$res = $this->modBranchPrice->insert($row['data']);
 			}else if($row["action"] == "UPDATE"){
-				$res = $this->modProduct->update($row['data']);
+				$res = $this->modBranchPrice->update($row['data']);
 			}
 			if(!$res["success"]){
 				$err++;
@@ -196,7 +197,7 @@ class Product extends CI_Controller {
 					if ($csv[0] != "id") {
 						$row_data[$csv[0]]["product_code"] = $csv[0];
 						$row_data[$csv[0]]["description"] = $csv[1];
-						$row_data[$csv[0]]["price"] = $csv[3];
+						$row_data[$csv[0]]["price"] = $csv[2];
 					}
 				}
 				

@@ -1,19 +1,21 @@
 <?php
 session_start();
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
-class Weekview extends CI_Controller {
+class Weekview extends CI_Controller
+{
 	public function index()
 	{
-		if(isset($_SESSION["rgc_username"])){
+		if (isset($_SESSION["rgc_username"])) {
 			$data["poscount"] = $_SESSION["rgc_poscount"];
 			$this->load->view('weekview', $data);
-		}else{
+		} else {
 			$this->load->view('login');
 		}
 	}
 
-	public function getAll(){
+	public function getAll()
+	{
 		$this->load->model('modConversion', "", TRUE);
 		$this->load->model('modProductMovement', "", TRUE);
 		$param = $this->input->post(NULL, "true");
@@ -23,7 +25,6 @@ class Weekview extends CI_Controller {
 		$param["dateto"] = $param["endDate"];
 		$param["datemerge"] = true;
 
-		$convertion = $this->modConversion->getAll($param)->result_array();
 		$pms = $this->modProductMovement->getTotal($param)->result_array();
 		$totalRecords = $this->modConversion->getAll($param)->num_rows();
 		$totalRecordwithFilter = $totalRecords;
@@ -31,7 +32,7 @@ class Weekview extends CI_Controller {
 		$period = new DatePeriod(
 			new DateTime($param["datefrom"]),
 			new DateInterval('P1D'),
-			new DateTime($param["dateto"]. ' 23:59:59')
+			new DateTime($param["dateto"] . ' 23:59:59')
 		);
 
 		$datecount = 0;
@@ -41,35 +42,14 @@ class Weekview extends CI_Controller {
 
 		$pmstotal = [];
 
-		foreach($pms as $ind => $row){
+		foreach ($pms as $ind => $row) {
 			$pmstotal[$row["product_id"]] = $row["pos_total"];
 		}
 
 		$data = [];
 
-		if(count($pms) > 0)
-			foreach($convertion as $ind => $row){
-				$pt = 0;
-				if(array_key_exists($row["product_code"], $pmstotal)){
-					$pt = $pmstotal[$row["product_code"]];
-				}
-				$week_total = $row["conversion"] * $pt;
-				$week_avg =  $week_total / $datecount;
-
-				if(array_key_exists($row['raw_material_id'], $data)){
-					$data[$row["raw_material_id"]]["week_total"] += $week_total;
-					$data[$row["raw_material_id"]]["week_avg"] += $week_avg;
-				}else{
-					$data[$row['raw_material_id']] = [];
-					$data[$row['raw_material_id']]["raw_material"] = $row["raw_material"];
-					$data[$row["raw_material_id"]]["uom_abbr"] = $row["uom_abbr"];
-					$data[$row["raw_material_id"]]["week_total"] = $week_total;
-					$data[$row["raw_material_id"]]["week_avg"] = $week_avg;
-				}
-			}
-
 		$aadata = [];
-		foreach($data as $ind => $row){
+		foreach ($data as $ind => $row) {
 			$row["week_total"] = number_format($row["week_total"], 2);
 			$row["week_avg"] = number_format($row["week_avg"], 2);
 			array_push($aadata, $row);
@@ -84,10 +64,10 @@ class Weekview extends CI_Controller {
 
 
 		echo json_encode($response);
-
 	}
 
-	public function getTotalpms(){
+	public function getTotalpms()
+	{
 		$this->load->model('modConversion', "", TRUE);
 		$this->load->model('modPeriod', "", TRUE);
 		$this->load->model('modProductMovement', "", TRUE);
@@ -107,7 +87,7 @@ class Weekview extends CI_Controller {
 		$period = new DatePeriod(
 			new DateTime($param["datefrom"]),
 			new DateInterval('P1D'),
-			new DateTime($param["dateto"]. ' 23:59:59')
+			new DateTime($param["dateto"] . ' 23:59:59')
 		);
 
 		$header = [];
@@ -118,16 +98,16 @@ class Weekview extends CI_Controller {
 		$raw_kit_composition = $this->modKit->getAll(null)->result_array();
 		$kit_composition = array();
 
-		foreach($raw_kit_composition as $ind => $row){
-//			$kit_composition[$row["product_id"]]["parent_id"] = $row["parent_id"];
-//			$kit_composition[$row["product_id"]]["cq"] = $row["quantity"];
+		foreach ($raw_kit_composition as $ind => $row) {
+			//			$kit_composition[$row["product_id"]]["parent_id"] = $row["parent_id"];
+			//			$kit_composition[$row["product_id"]]["cq"] = $row["quantity"];
 			$pdata = array(
 				"parent_id" => $row["parent_id"],
 				"cq" => $row["quantity"]
 			);
-			if(array_key_exists($row["product_id"], $kit_composition)){
+			if (array_key_exists($row["product_id"], $kit_composition)) {
 				array_push($kit_composition[$row["product_id"]], $pdata);
-			}else{
+			} else {
 				$kit_composition[$row["product_id"]] = array($pdata);
 			}
 		}
@@ -143,35 +123,35 @@ class Weekview extends CI_Controller {
 		}
 
 		$sortedperiod = [];
-		foreach($perioddata as $ind => $row){
+		foreach ($perioddata as $ind => $row) {
 			$dateformat = date('Ymd', strtotime($row["date"]));
 			$sortedperiod[$dateformat] = $row["sales"];
 		}
 
-		foreach($pms as $ind => $row){
+		foreach ($pms as $ind => $row) {
 			$datedataarray[$row["product_id"]]['desc'] = $row["description"];
 
 			$parent_id = null;
 			$dateformat = date('Ymd', strtotime($row["date"]));
 
-			if(array_key_exists($row["product_id"], $kit_composition)){
-				foreach($kit_composition[$row["product_id"]] as $i => $r){
+			if (array_key_exists($row["product_id"], $kit_composition)) {
+				foreach ($kit_composition[$row["product_id"]] as $i => $r) {
 					$parent_id = $r["parent_id"];
 					$cq = $r["cq"];
 
 					$datedataarray[$row["product_id"]]['parent_id'] = $parent_id;
 					$pms[$ind]['parent_id'] = $parent_id;
 
-					if(array_key_exists($parent_id.$dateformat, $childsum)){
-						$childsum[$parent_id.$dateformat] += ($row["pos_total"] * $cq);
-					}else{
-						$childsum[$parent_id.$dateformat] = ($row["pos_total"] * $cq);
+					if (array_key_exists($parent_id . $dateformat, $childsum)) {
+						$childsum[$parent_id . $dateformat] += ($row["pos_total"] * $cq);
+					} else {
+						$childsum[$parent_id . $dateformat] = ($row["pos_total"] * $cq);
 					}
 
 					$children[$parent_id][$row["product_id"]]['desc'] = $row["description"];
 					$children[$parent_id][$row["product_id"]][$dateformat] = $row["pos_total"];
 				}
-			}else{
+			} else {
 				$pms[$ind]['parent_id'] = null;
 				$datedataarray[$row["product_id"]]['parent_id'] = null;
 			}
@@ -180,43 +160,43 @@ class Weekview extends CI_Controller {
 			$datedataarray[$row["product_id"]]['date'][$dateformat] = $row["pos_total"];
 		}
 
-		foreach($datedataarray as $ind => $row){
-			foreach($sortedperiod as $si => $sr){
-				if(!array_key_exists($si, $row["date"])){
+		foreach ($datedataarray as $ind => $row) {
+			foreach ($sortedperiod as $si => $sr) {
+				if (!array_key_exists($si, $row["date"])) {
 					$datedataarray[$ind]["date"][$si] = 0;
 				}
 			}
 		};
 
-		foreach($children as $ind => $row){
-			foreach($row as $ind2 => $row2){
+		foreach ($children as $ind => $row) {
+			foreach ($row as $ind2 => $row2) {
 				foreach ($period as $date) {
 					$dateStr = $date->format('Ymd');
-					if(!array_key_exists($dateStr, $row2)){
+					if (!array_key_exists($dateStr, $row2)) {
 						$children[$ind][$ind2][$dateStr] = 0;
 					}
 				}
 			}
 		}
 
-		foreach($pms as $ind => $row){
+		foreach ($pms as $ind => $row) {
 			$total = $row["pos_total"];
 			$price = $row["price"];
 			$dateformat = date('Ymd', strtotime($row["date"]));
 
-			if(is_null($row["parent_id"]) || $row["parent_id"] == "") {
-				$childsumindex = $row["product_id"].$dateformat;
-				if(array_key_exists($childsumindex, $childsum)){
+			if (is_null($row["parent_id"]) || $row["parent_id"] == "") {
+				$childsumindex = $row["product_id"] . $dateformat;
+				if (array_key_exists($childsumindex, $childsum)) {
 					$total = $total - $childsum[$childsumindex];
 				}
 
-				if(!$row["allow_weekview"]){
+				if (!$row["allow_weekview"]) {
 					$total = 0;
 				}
 			}
 
-			if(strpos($row["product_id"], 'SC')) {
-				$price = number_format(($row["price"] * 0.8) / 1.12, 3)	;
+			if (strpos($row["product_id"], 'SC')) {
+				$price = number_format(($row["price"] * 0.8) / 1.12, 3);
 			};
 
 			$datedataarray[$row["product_id"]]['sales'][$dateformat] = $total * $price;
@@ -226,13 +206,12 @@ class Weekview extends CI_Controller {
 		$datatotal = [];
 		$salestotal = [];
 
-		foreach($datedataarray as $ind => $row){
+		foreach ($datedataarray as $ind => $row) {
 			foreach ($row['date'] as $ind2 => $row2) {
 				if (isset($datatotal[$ind]))
 					$datatotal[$ind] += $row2;
 				else
 					$datatotal[$ind] = $row2;
-
 			}
 
 			foreach ($row['sales'] as $ind2 => $row2) {
@@ -240,12 +219,11 @@ class Weekview extends CI_Controller {
 					$salestotal[$ind2] += $row2;
 				else
 					$salestotal[$ind2] = $row2;
-
 			}
 
 			foreach ($period as $date) {
 				$dateStr = $date->format('Ymd');
-				if(!array_key_exists($dateStr, $row['date'])){
+				if (!array_key_exists($dateStr, $row['date'])) {
 					$salestotal[$dateStr] = 0;
 					$sortedperiod[$dateStr] = 0;
 					$datedataarray[$ind]['date'][$dateStr] = 0;
@@ -253,26 +231,26 @@ class Weekview extends CI_Controller {
 			}
 		}
 
-		foreach($datedataarray as $ind => $row){
+		foreach ($datedataarray as $ind => $row) {
 			ksort($row['date']);
 			$datedataarray[$ind]['date'] = $row['date'];
 		}
 
 		$data = [];
-		foreach($datedataarray as $ind => $row){
-			if(is_null($row["parent_id"]) || $row["parent_id"] == ""){
+		foreach ($datedataarray as $ind => $row) {
+			if (is_null($row["parent_id"]) || $row["parent_id"] == "") {
 				$data[$ind] = [];
 
 				$data[$ind]['desc'] = $row['desc'];
 				$data[$ind]['week_total'] = number_format($datatotal[$ind], 2);
 				$data[$ind]['week_avg'] = number_format($datatotal[$ind] / $datecount, 2);
 
-				foreach($row['date'] as $ind2 => $row2){
+				foreach ($row['date'] as $ind2 => $row2) {
 					$data[$ind][$ind2] = number_format($row2, 2);
 				}
 
-				if(array_key_exists($row["id"], $children)){
-					foreach($children[$row["id"]] as $cind => $crow){
+				if (array_key_exists($row["id"], $children)) {
+					foreach ($children[$row["id"]] as $cind => $crow) {
 						$data[$ind]['child'][$cind] = $crow;
 					}
 				}
@@ -281,7 +259,7 @@ class Weekview extends CI_Controller {
 
 		ksort($sortedperiod);
 
-		if(count($data) > 0) {
+		if (count($data) > 0) {
 			$weeksales = 0;
 			foreach ($salestotal as $ind => $row) {
 				$weeksales += $row;
@@ -312,11 +290,10 @@ class Weekview extends CI_Controller {
 			}
 
 			array_unshift($data, $newperioddata);
-
 		}
 
 		$aadata = [];
-		foreach($data as $ind => $row){
+		foreach ($data as $ind => $row) {
 			array_push($aadata, $row);
 		}
 

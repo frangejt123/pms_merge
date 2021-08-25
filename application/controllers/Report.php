@@ -218,5 +218,24 @@ class Report extends CI_Controller {
             // print_r($d);
 
 			$this->load->view('report/productlist_report', $d);
-	}
+	    }
+
+        public function rawamteriallist(){
+			$this->load->library('Pdf');
+			$this->load->model('modRawmaterial', "", TRUE);
+            $this->load->model('modBranch', "", TRUE);
+			$param = $this->input->get(NULL, "true");
+            $branchParam["id"] = $_SESSION["rgc_branch_id"];
+
+			$rawmat = $this->modRawmaterial->getAll(null)->result_array();
+
+			$branchData = $this->modBranch->getAll($branchParam)->row_array();
+
+			$d = array();
+			$d["rawmat"] = $rawmat;
+			$d["address"] = $branchData["address"];
+			$d["operated_by"] = $branchData["operated_by"];
+
+			$this->load->view('report/rawmaterialslist_report', $d);
+	    }
 }

@@ -175,7 +175,7 @@ class ModProductmovement extends CI_Model {
 //		$this->db->where('product_movement.product_id LIKE', '%60001%');
 		$this->db->where('period.date >=', $param["datefrom"]);
 		$this->db->where('period.date <=', $param["dateto"]);
-//		$this->db->where('product_movement.product_id LIKE "%50002%"');//product_movement.product_id LIKE "%50001%" OR (
+		// $this->db->where('product_movement.product_id LIKE "%50016%"');//product_movement.product_id LIKE "%50001%" OR (
 		$this->db->order_by('product.description', 'ASC');
 		$query = $this->db->get();
 

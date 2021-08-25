@@ -1,4 +1,6 @@
 $(document).ready(function () {
+	$("#li-product").addClass("active");
+
 	var productkit = {};
 	$("button#new_product_btn").on("click", function () {
 		$("div#new_product_modal").modal("show");
@@ -288,7 +290,7 @@ $(document).ready(function () {
 						uom_description +
 						"</td><td>" +
 						parseFloat(data["price"]).toFixed(2) +
-						"</td><td></a></td></tr>";
+						"qwe</td></tr>";
 
 					$("table#producttable tbody").prepend(tr);
 					$('[data-toggle="tooltip"]').tooltip();
@@ -567,7 +569,7 @@ $(document).ready(function () {
 						row["uom_description"] +
 						"</td><td>" +
 						parseFloat(row["price"]).toFixed(2) +
-						"</td><td></tr>";
+						"</td></tr>";
 				});
 
 				$("table#producttable tbody").html(tr);
@@ -692,7 +694,7 @@ $(document).ready(function () {
 		$.ajax({
 			url: baseurl + "/product/applychanges",
 			type: "POST",
-			data: data,
+			data: "data=" + JSON.stringify(data),
 			success: function (res) {
 				if (res == "success") {
 					$("div#product_changes_modal").modal("hide");

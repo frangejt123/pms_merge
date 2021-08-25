@@ -1,95 +1,138 @@
-$(document).ready(function(){
-
+$(document).ready(function () {
+	$("#li-dashboard").addClass("active");
 	function getCurrentWeek() {
 		var currentDate = moment();
 
-		var weekStart = currentDate.clone().startOf('isoWeek');
-		var weekEnd = currentDate.clone().endOf('isoWeek');
+		var weekStart = currentDate.clone().startOf("isoWeek");
+		var weekEnd = currentDate.clone().endOf("isoWeek");
 
 		var days = [];
 
 		for (var i = 0; i <= 6; i++) {
-			days.push(moment(weekStart).add(i, 'days').format("YYYY-MM-DD"));
+			days.push(moment(weekStart).add(i, "days").format("YYYY-MM-DD"));
 		}
 
 		return days;
 	}
 
-	var days_of_week = {};
-	days_of_week["date"] = getCurrentWeek();
+	var param = {};
+	param["date"] = getCurrentWeek();
 
 	$.ajax({
 		method: "POST",
-		url: baseurl+"/dashboard/productContribution",
-		data: days_of_week,
-		success: function(res){
-			res = JSON.parse(res);
-
-			$("h3#weekly_sales_cont").html(res["total_sales"]);
-			$("h3#ave_sales_cont").html(res["ave_sales"]);
-
-			Highcharts.chart('pie-chart', {
-				chart: {
-					plotBackgroundColor: null,
-					plotBorderWidth: null,
-					plotShadow: false,
-					type: 'pie'
-				},
-				title: {
-					text: 'Product Contribution'
-				},
-				subtitle: {
-					text: res["datefrom"] + ' - ' + res["dateto"]
-				},
-				tooltip: {
-					pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-				},
-				accessibility: {
-					point: {
-						valueSuffix: '%'
-					}
-				},
-				plotOptions: {
-					pie: {
-						allowPointSelect: true,
-						cursor: 'pointer',
-						dataLabels: {
-							enabled: true,
-							format: '<b>{point.name}</b>: {point.percentage:.1f} %'
-						}
-					}
-				},
-				exporting: {
-					buttons: {
-						contextButton: {
-							menuItems: [
-								'printChart',
-								'separator',
-								'downloadPNG',
-								'downloadJPEG',
-								'downloadPDF'
-							]
-						}
-					}
-				},
-				series: [{
-					name: 'Product',
-					colorByPoint: true,
-					data: res["product_cont"]
-				}]
+		url: baseurl + "/branch/getAll",
+		success: function (res) {
+			var res = JSON.parse(res);
+			var data = [{ id: "", text: "" }];
+			$.each(res, function (i, r) {
+				data.push({ id: r["id"], text: r["branch_name"] });
 			});
 
-			var tr = "";
-			$.each(res["salesarr"], function(ind, row){
-				tr += "<tr><td>"+row["date"]+"</td><td>"+row["sales"]+"</td></tr>";
+			$(".select2#period_branch").select2({
+				placeholder: "Select a branch",
+				data: data,
 			});
-
-			$("table#daily_sales_tbl tbody").html(tr);
-			var datetitle = res["datefrom"] + ' - ' + res["dateto"];
-			generate_topsales_product(res["mealsales"], res["drilldown"], datetitle);
-			generate_topsales_drinks(res["drinksales"], res["drilldown"], datetitle);
-		}
+		},
 	});
+
+	$("#period_branch").on("change", function () {
+		param["branch_id"] = $(this).val();
+		getProductCont();
+	});
+
+	if (access_level > 0) {
+		getProductCont();
+	}
+
+	function getProductCont() {
+		$.ajax({
+			method: "POST",
+			url: baseurl + "/dashboard/productContribution",
+			data: param,
+			success: function (res) {
+				res = JSON.parse(res);
+
+				$("h3#weekly_sales_cont").html(res["total_sales"]);
+				$("h3#ave_sales_cont").html(res["ave_sales"]);
+
+				Highcharts.chart("pie-chart", {
+					chart: {
+						plotBackgroundColor: null,
+						plotBorderWidth: null,
+						plotShadow: false,
+						type: "pie",
+					},
+					title: {
+						text: "Product Contribution",
+					},
+					subtitle: {
+						text: res["datefrom"] + " - " + res["dateto"],
+					},
+					tooltip: {
+						pointFormat: "{series.name}: <b>{point.percentage:.1f}%</b>",
+					},
+					accessibility: {
+						point: {
+							valueSuffix: "%",
+						},
+					},
+					plotOptions: {
+						pie: {
+							allowPointSelect: true,
+							cursor: "pointer",
+							dataLabels: {
+								enabled: true,
+								format: "<b>{point.name}</b>: {point.percentage:.1f} %",
+							},
+						},
+					},
+					exporting: {
+						buttons: {
+							contextButton: {
+								menuItems: [
+									"printChart",
+									"separator",
+									"downloadPNG",
+									"downloadJPEG",
+									"downloadPDF",
+								],
+							},
+						},
+					},
+					series: [
+						{
+							name: "Product",
+							colorByPoint: true,
+							data: res["product_cont"],
+						},
+					],
+				});
+
+				var tr = "";
+				$.each(res["salesarr"], function (ind, row) {
+					tr +=
+						"<tr><td>" +
+						row["date"] +
+						"</td><td>" +
+						row["sales"] +
+						"</td></tr>";
+				});
+
+				$("table#daily_sales_tbl tbody").html(tr);
+				var datetitle = res["datefrom"] + " - " + res["dateto"];
+				generate_topsales_product(
+					res["mealsales"],
+					res["drilldown"],
+					datetitle
+				);
+				generate_topsales_drinks(
+					res["drinksales"],
+					res["drilldown"],
+					datetitle
+				);
+			},
+		});
+	}
 
 	// $.ajax({
 	// 	method: "POST",
@@ -111,69 +154,69 @@ $(document).ready(function(){
 
 	// Create the chart
 
-	function generate_topsales_product(topsalesdata, drilldown, datetitle){
-		Highcharts.chart('top-product-container', {
+	function generate_topsales_product(topsalesdata, drilldown, datetitle) {
+		Highcharts.chart("top-product-container", {
 			chart: {
-				type: 'column'
+				type: "column",
 			},
 			title: {
-				text: 'Best Seller — Product'
+				text: "Best Seller — Product",
 			},
 			subtitle: {
-				text: datetitle
+				text: datetitle,
 			},
 			accessibility: {
 				announceNewData: {
-					enabled: true
-				}
+					enabled: true,
+				},
 			},
 			exporting: {
 				buttons: {
 					contextButton: {
 						menuItems: [
-							'printChart',
-							'separator',
-							'downloadPNG',
-							'downloadJPEG',
-							'downloadPDF'
-						]
-					}
-				}
+							"printChart",
+							"separator",
+							"downloadPNG",
+							"downloadJPEG",
+							"downloadPDF",
+						],
+					},
+				},
 			},
 			xAxis: {
-				type: 'category'
+				type: "category",
 			},
 			yAxis: {
 				title: {
-					text: 'Quantity'
-				}
-
+					text: "Quantity",
+				},
 			},
 			legend: {
-				enabled: false
+				enabled: false,
 			},
 			plotOptions: {
 				series: {
 					borderWidth: 0,
 					dataLabels: {
 						enabled: true,
-						format: '{point.y:.1f}'
-					}
-				}
+						format: "{point.y:.1f}",
+					},
+				},
 			},
 			tooltip: {
 				headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
-				pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}</b><br/>'
+				pointFormat:
+					'<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}</b><br/>',
 			},
 			series: [
 				{
 					name: "Product",
 					colorByPoint: true,
-					data: topsalesdata
-				}
+					data: topsalesdata,
+				},
 			],
-			drilldown:{
-				series: drilldown
+			drilldown: {
+				series: drilldown,
 			},
 			// drilldown: {
 			// 	series: [
@@ -426,71 +469,71 @@ $(document).ready(function(){
 
 	// Create the chart
 	function generate_topsales_drinks(topsalesdata, drilldown, datetitle) {
-		Highcharts.chart('top-drinks-container', {
+		Highcharts.chart("top-drinks-container", {
 			chart: {
-				type: 'column'
+				type: "column",
 			},
 			title: {
-				text: 'Best Seller — Drinks'
+				text: "Best Seller — Drinks",
 			},
 			subtitle: {
-				text: datetitle
+				text: datetitle,
 			},
 			accessibility: {
 				announceNewData: {
-					enabled: true
-				}
+					enabled: true,
+				},
 			},
 			exporting: {
 				buttons: {
 					contextButton: {
 						menuItems: [
-							'printChart',
-							'separator',
-							'downloadPNG',
-							'downloadJPEG',
-							'downloadPDF'
-						]
-					}
-				}
+							"printChart",
+							"separator",
+							"downloadPNG",
+							"downloadJPEG",
+							"downloadPDF",
+						],
+					},
+				},
 			},
 			xAxis: {
-				type: 'category'
+				type: "category",
 			},
 			yAxis: {
 				title: {
-					text: 'Quantity'
-				}
-
+					text: "Quantity",
+				},
 			},
 			legend: {
-				enabled: false
+				enabled: false,
 			},
 			plotOptions: {
 				series: {
 					borderWidth: 0,
 					dataLabels: {
 						enabled: true,
-						format: '{point.y:.1f}'
-					}
-				}
+						format: "{point.y:.1f}",
+					},
+				},
 			},
 
 			tooltip: {
 				headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
-				pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}</b><br/>'
+				pointFormat:
+					'<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}</b><br/>',
 			},
 
 			series: [
 				{
 					name: "Drinks",
 					colorByPoint: true,
-					data: topsalesdata
-				}
+					data: topsalesdata,
+				},
 			],
 			drilldown: {
-				series: drilldown
-			}
+				series: drilldown,
+			},
 			// drilldown: {
 			// 	series: [
 			// 		{
@@ -667,5 +710,4 @@ $(document).ready(function(){
 			// }
 		});
 	}
-
 });

@@ -1,165 +1,218 @@
-$(document).ready(function(){
+$(document).ready(function () {
+	$("#li-userlist").addClass("active");
 	/* populate userlist list */
 	$.ajax({
 		method: "POST",
-		url: baseurl+"/userlist/getAll",
-		success: function(res){
+		url: baseurl + "/userlist/getAll",
+		success: function (res) {
 			var res = JSON.parse(res);
 			var tr = "";
-			$.each(res, function(ind, row){
+			$.each(res, function (ind, row) {
 				var style = "";
 				var cls = "";
-				if(row["access_level"] == 0){
+				if (row["access_level"] == 0) {
 					style = " style='color: #ed8533'";
 					cls = " class='admintr'";
 				}
 
-				tr += '<tr id="'+row["id"]+'" '+style+cls+'>'
-						+ '<td>'+row["firstname"]+'</td>'
-						+ '<td>'+row["lastname"]+'</td>'
-						+ '<td class="usernametd">'+row["username"]+'</td>'
-						+ '<td>'+row["branch_name"]+'</td>'
-						+ '<td style="display:none">'+row["branch_id"]+'</td></tr>';
+				tr +=
+					'<tr id="' +
+					row["id"] +
+					'" ' +
+					style +
+					cls +
+					">" +
+					"<td>" +
+					row["firstname"] +
+					"</td>" +
+					"<td>" +
+					row["lastname"] +
+					"</td>" +
+					'<td class="usernametd">' +
+					row["username"] +
+					"</td>" +
+					"<td>" +
+					row["branch_name"] +
+					"</td>" +
+					'<td style="display:none">' +
+					row["branch_id"] +
+					"</td></tr>";
 			});
 			$("table#userlisttable tbody").html(tr);
-		}
+		},
 	});
 
-	$("button#new_userlist_btn").on("click", function(){
+	$("button#new_userlist_btn").on("click", function () {
 		var inputs = $("form#newUserForm").find("input");
 		$("select#userlist_access_lvl").val("").trigger("change");
-		$.each(inputs, function(ind, row){
+		$.each(inputs, function (ind, row) {
 			$(this).val("");
 		});
 
 		$("div#new_userlist_modal").modal("show");
 	});
 
-	var acclvlopt = [{"id":"","text":"", "selected": false}, {"id":"0","text":"Administrator"}, {"id":"1","text":"System User"}];
+	var acclvlopt = [
+		{ id: "", text: "", selected: false },
+		{ id: "0", text: "Administrator" },
+		{ id: "1", text: "System User" },
+	];
 	$("select#userlist_access_lvl, select#detail_userlist_access_lvl").select2({
-        placeholder: "Select Access Level",
+		placeholder: "Select Access Level",
 		width: "100%",
-		data: acclvlopt
+		data: acclvlopt,
 	});
 
-	$("#newUser_submitBtn").on("click", function(){
+	$("#newUser_submitBtn").on("click", function () {
 		var firstname = $("input#userlist_firstname").val();
 		var lastname = $("input#userlist_lastname").val();
 		var username = $("input#userlist_username").val();
 		var branch = $("select#userlist_branch").val();
 		var access_level = $("select#userlist_access_lvl").val();
 
-
 		var password = $("input#userlist_password").val();
 		var cfm_password = $("input#userlist_cfm_password").val();
 
-		if(password != cfm_password){
-			$.bootstrapGrowl("&nbsp; &nbsp; <span class='fa fa-exclamation-circle' style='font-size: 20px'></span> &nbsp; Password did not match.", {
-				type: "danger",
-				width: 300
-			});
+		if (password != cfm_password) {
+			$.bootstrapGrowl(
+				"&nbsp; &nbsp; <span class='fa fa-exclamation-circle' style='font-size: 20px'></span> &nbsp; Password did not match.",
+				{
+					type: "danger",
+					width: 300,
+				}
+			);
 			return;
 		}
 
 		var data = {
-			"firstname": firstname,
-			"lastname": lastname,
-			"username": username,
-			"password": password,
-			"branch_id": branch,
-			"access_level": access_level
-		}
+			firstname: firstname,
+			lastname: lastname,
+			username: username,
+			password: password,
+			branch_id: branch,
+			access_level: access_level,
+		};
 
-		var branchopt = $("select#userlist_branch").select2('data');
+		var branchopt = $("select#userlist_branch").select2("data");
 		var selectedbranchtxt = branchopt[0].text;
 
 		var inputs = $("form#newUserForm").find("input");
 
 		var empty = 0;
-		$.each(inputs, function(ind, row){
+		$.each(inputs, function (ind, row) {
 			$(this).removeClass("emptyField");
-			if($(this).val() == ""){
+			if ($(this).val() == "") {
 				$(this).addClass("emptyField");
 				empty++;
 			}
 		});
 
-		$("div#userbranchform").find("span.select2-container--default").removeClass("emptyField");
-		if(branch == ""){
-			$("div#userbranchform").find("span.select2-container--default").addClass("emptyField");
+		$("div#userbranchform")
+			.find("span.select2-container--default")
+			.removeClass("emptyField");
+		if (branch == "") {
+			$("div#userbranchform")
+				.find("span.select2-container--default")
+				.addClass("emptyField");
 			empty++;
 		}
 
-		$("div#accesslvlform").find("span.select2-container--default").removeClass("emptyField");
-		if(access_level == ""){
-			$("div#accesslvlform").find("span.select2-container--default").addClass("emptyField");
+		$("div#accesslvlform")
+			.find("span.select2-container--default")
+			.removeClass("emptyField");
+		if (access_level == "") {
+			$("div#accesslvlform")
+				.find("span.select2-container--default")
+				.addClass("emptyField");
 			empty++;
 		}
 
-		if(empty > 0){
-			$.bootstrapGrowl("&nbsp; &nbsp; <span class='fa fa-exclamation-circle' style='font-size: 20px'></span> &nbsp; Please fill in required fields.", {
-	          type: "danger",
-	          width: 300
-	        });
+		if (empty > 0) {
+			$.bootstrapGrowl(
+				"&nbsp; &nbsp; <span class='fa fa-exclamation-circle' style='font-size: 20px'></span> &nbsp; Please fill in required fields.",
+				{
+					type: "danger",
+					width: 300,
+				}
+			);
 			return;
 		}
-
 
 		// if (!validateEmail(email)) {
 		// 	$("input#userlist_email").addClass("emptyField");
 		//     $.bootstrapGrowl("&nbsp; &nbsp; <span class='fa fa-exclamation-circle' style='font-size: 20px'></span> &nbsp; Incorrect email format.", {
-	    //       type: "danger",
-	    //       width: 300
-	    //     });s
+		//       type: "danger",
+		//       width: 300
+		//     });s
 		// 	return;
 		// }
 
-
 		var usernamelist = $("table#userlisttable tbody tr td.usernametd");
 		var usernameexist = 0;
-		$.each(usernamelist, function(ind, row){
-			if($(row).html() == username){
+		$.each(usernamelist, function (ind, row) {
+			if ($(row).html() == username) {
 				usernameexist++;
 			}
 		});
 
-		if(usernameexist > 0){
+		if (usernameexist > 0) {
 			$("input#userlist_username").addClass("emptyField");
-		    $.bootstrapGrowl("&nbsp; &nbsp; <span class='fa fa-exclamation-circle' style='font-size: 20px'></span> &nbsp; Username already taken.", {
-	          type: "danger",
-	          width: 300
-	        });
-	        return;
+			$.bootstrapGrowl(
+				"&nbsp; &nbsp; <span class='fa fa-exclamation-circle' style='font-size: 20px'></span> &nbsp; Username already taken.",
+				{
+					type: "danger",
+					width: 300,
+				}
+			);
+			return;
 		}
 
 		$.ajax({
 			method: "POST",
 			data: data,
-			url: baseurl+"/userlist/insert",
-			success: function(res){
+			url: baseurl + "/userlist/insert",
+			success: function (res) {
 				var res = JSON.parse(res);
-				if(res["success"]){
+				if (res["success"]) {
 					var style = "";
-					if(access_level == 0){
+					if (access_level == 0) {
 						style = " style='color: #ed8533'";
 					}
-					var tr = '<tr id="'+res["id"]+'" '+style+'>'
-								+ '<td>'+res["firstname"]+'</td>'
-								+ '<td>'+res["lastname"]+'</td>'
-								+ '<td class="usernametd">'+username+'</td>'
-								+ '<td>'+selectedbranchtxt+'</td>'
-								+ '<td style="display:none">'+branch+'</td></tr>';
+					var tr =
+						'<tr id="' +
+						res["id"] +
+						'" ' +
+						style +
+						">" +
+						"<td>" +
+						res["firstname"] +
+						"</td>" +
+						"<td>" +
+						res["lastname"] +
+						"</td>" +
+						'<td class="usernametd">' +
+						username +
+						"</td>" +
+						"<td>" +
+						selectedbranchtxt +
+						"</td>" +
+						'<td style="display:none">' +
+						branch +
+						"</td></tr>";
 
-		            $("table#userlisttable tbody").prepend(tr);
+					$("table#userlisttable tbody").prepend(tr);
 					$("div#new_userlist_modal").modal("hide");
 
-					$.bootstrapGrowl("&nbsp; &nbsp; <span class='fa fa-exclamation-circle' style='font-size: 20px'></span> &nbsp; Changes successfully saved!", {
-			          type: "success",
-			          allow_dismiss: false,
-			          width: 300
-			        });
+					$.bootstrapGrowl(
+						"&nbsp; &nbsp; <span class='fa fa-exclamation-circle' style='font-size: 20px'></span> &nbsp; Changes successfully saved!",
+						{
+							type: "success",
+							allow_dismiss: false,
+							width: 300,
+						}
+					);
 				}
-			}
+			},
 		});
 	});
 
@@ -169,7 +222,7 @@ $(document).ready(function(){
 	// }
 
 	/* on row click */
-	$("table#userlisttable tbody").on("click", "tr", function(){
+	$("table#userlisttable tbody").on("click", "tr", function () {
 		var tds = $(this).find("td");
 		var id = $(this).attr("id");
 
@@ -189,34 +242,40 @@ $(document).ready(function(){
 		$("div#userlist_detail_modal").modal("show");
 	});
 
-	$('.select2#detail_user_branch, .select2#userlist_branch').select2({
-	 	width: "100%"
+	$(".select2#detail_user_branch, .select2#userlist_branch").select2({
+		width: "100%",
 	});
-	$('div#userlist_detail_modal, div#new_userlist_modal').on('shown.bs.modal', function () {
-		var selectedbranch = $("div#userlist_detail_modal").data("selectedbranch");
+	$("div#userlist_detail_modal, div#new_userlist_modal").on(
+		"shown.bs.modal",
+		function () {
+			var selectedbranch = $("div#userlist_detail_modal").data(
+				"selectedbranch"
+			);
 
-        $.ajax({
-            method: "POST",
-            url: baseurl+"/branch/getAll",
-            success: function(res){
-                var res = JSON.parse(res);
-                var data = [{"id":"","text":"", "selected": false}];
-                $.each(res, function(i, r){
-                    data.push({"id":r["id"],"text":r["branch_name"]});
-                });
+			$.ajax({
+				method: "POST",
+				url: baseurl + "/branch/getAll",
+				success: function (res) {
+					var res = JSON.parse(res);
+					var data = [{ id: "", text: "", selected: false }];
+					$.each(res, function (i, r) {
+						data.push({ id: r["id"], text: r["branch_name"] });
+					});
 
+					$(".select2#detail_user_branch, .select2#userlist_branch")
+						.select2({
+							placeholder: "Select a branch",
+							data: data,
+							width: "100%",
+						})
+						.val(selectedbranch)
+						.trigger("change");
+				},
+			});
+		}
+	);
 
-                 $('.select2#detail_user_branch, .select2#userlist_branch').select2({
-                    placeholder: "Select a branch",
-                    data: data,
-                    width: "100%"
-                 }).val(selectedbranch).trigger("change");
-            }
-        });
-
-  	});
-
-	$("#updateUser_submitBtn").on("click", function(){
+	$("#updateUser_submitBtn").on("click", function () {
 		var id = $("div#userlist_detail_modal").data("id");
 		var firstname = $("input#detail_userlist_firstname").val();
 		var lastname = $("input#detail_userlist_lastname").val();
@@ -225,135 +284,162 @@ $(document).ready(function(){
 		var access_level = $("select#detail_userlist_access_lvl").val();
 
 		var d = {
-			"id": id,
-			"firstname": firstname,
-			"lastname": lastname,
-			"username": username,
-			"branch_id": branch,
-			"access_level": access_level
-		}
+			id: id,
+			firstname: firstname,
+			lastname: lastname,
+			username: username,
+			branch_id: branch,
+			access_level: access_level,
+		};
 
 		var inputs = $("form#detailUserForm").find("input");
 		var empty = 0;
-		$.each(inputs, function(ind, row){
+		$.each(inputs, function (ind, row) {
 			$(this).removeClass("emptyField");
-			if($(this).val() == ""){
+			if ($(this).val() == "") {
 				$(this).addClass("emptyField");
 				empty++;
 			}
 		});
 
-		if(empty > 0){
-			$.bootstrapGrowl("&nbsp; &nbsp; <span class='fa fa-exclamation-circle' style='font-size: 20px'></span> &nbsp; Please fill in required fields.", {
-	          type: "danger",
-	          width: 300
-	        });
+		if (empty > 0) {
+			$.bootstrapGrowl(
+				"&nbsp; &nbsp; <span class='fa fa-exclamation-circle' style='font-size: 20px'></span> &nbsp; Please fill in required fields.",
+				{
+					type: "danger",
+					width: 300,
+				}
+			);
 			return;
 		}
 
 		// if (!validateEmail(email)) {
 		// 	$("input#userlist_email").addClass("emptyField");
 		//     $.bootstrapGrowl("&nbsp; &nbsp; <span class='fa fa-exclamation-circle' style='font-size: 20px'></span> &nbsp; Incorrect email format.", {
-	    //       type: "danger",
-	    //       width: 300
-	    //     });s
+		//       type: "danger",
+		//       width: 300
+		//     });s
 		// 	return;
 		// }
 
 		var usernamelist = $("table#userlisttable tbody tr td.usernametd");
 		var usernameexist = 0;
-		var currentusername = $("table#userlisttable tbody tr#"+id+" td.usernametd");
-		$.each(usernamelist, function(ind, row){
-			if($(row).html() != $(currentusername).html())
-				if($(row).html() == username){
+		var currentusername = $(
+			"table#userlisttable tbody tr#" + id + " td.usernametd"
+		);
+		$.each(usernamelist, function (ind, row) {
+			if ($(row).html() != $(currentusername).html())
+				if ($(row).html() == username) {
 					usernameexist++;
 				}
 		});
 
-		if(usernameexist > 0){
+		if (usernameexist > 0) {
 			$("input#detail_userlist_username").addClass("emptyField");
-		    $.bootstrapGrowl("&nbsp; &nbsp; <span class='fa fa-exclamation-circle' style='font-size: 20px'></span> &nbsp; Username already taken.", {
-	          type: "danger",
-	          width: 300
-	        });
+			$.bootstrapGrowl(
+				"&nbsp; &nbsp; <span class='fa fa-exclamation-circle' style='font-size: 20px'></span> &nbsp; Username already taken.",
+				{
+					type: "danger",
+					width: 300,
+				}
+			);
 
-	        return;
+			return;
 		}
 
-		var branchopt = $("select#detail_user_branch").select2('data');
+		var branchopt = $("select#detail_user_branch").select2("data");
 		var selectedbranchtxt = branchopt[0].text;
 
 		$.ajax({
 			method: "POST",
 			data: d,
-			url: baseurl+"/userlist/update",
-			success: function(res){
+			url: baseurl + "/userlist/update",
+			success: function (res) {
 				var res = JSON.parse(res);
-				if(res["success"]){
+				if (res["success"]) {
 					var style = "";
-					$("table#userlisttable tbody tr#"+id).removeClass("admintr");
-					$("table#userlisttable tbody tr#"+id).attr({"style":""});
-					if(access_level == 0){
-						$("table#userlisttable tbody tr#"+id).addClass("admintr");
-					$("table#userlisttable tbody tr#"+id).attr({"style":"color:#ed8533"});
+					$("table#userlisttable tbody tr#" + id).removeClass("admintr");
+					$("table#userlisttable tbody tr#" + id).attr({ style: "" });
+					if (access_level == 0) {
+						$("table#userlisttable tbody tr#" + id).addClass("admintr");
+						$("table#userlisttable tbody tr#" + id).attr({
+							style: "color:#ed8533",
+						});
 					}
 
-					var td = '<td>'+res["firstname"]+'</td>'
-								+ '<td>'+res["lastname"]+'</td>'
-								+ '<td class="usernametd">'+username+'</td>'
-								+ '<td>'+selectedbranchtxt+'</td>'
-								+ '<td style="display:none">'+branch+'</td></tr>';
+					var td =
+						"<td>" +
+						res["firstname"] +
+						"</td>" +
+						"<td>" +
+						res["lastname"] +
+						"</td>" +
+						'<td class="usernametd">' +
+						username +
+						"</td>" +
+						"<td>" +
+						selectedbranchtxt +
+						"</td>" +
+						'<td style="display:none">' +
+						branch +
+						"</td></tr>";
 
-		            $("table#userlisttable tbody tr#"+id).html(td);
+					$("table#userlisttable tbody tr#" + id).html(td);
 					$("div#userlist_detail_modal").modal("hide");
 
-					$.bootstrapGrowl("&nbsp; &nbsp; <span class='fa fa-exclamation-circle' style='font-size: 20px'></span> &nbsp; Changes successfully updated!", {
-			          type: "success",
-			          width: 300
-			        });
+					$.bootstrapGrowl(
+						"&nbsp; &nbsp; <span class='fa fa-exclamation-circle' style='font-size: 20px'></span> &nbsp; Changes successfully updated!",
+						{
+							type: "success",
+							width: 300,
+						}
+					);
 				}
-			}
+			},
 		});
 	});
 
 	/*delete record*/
-	$("button#delete_userlist").on("click", function(){
+	$("button#delete_userlist").on("click", function () {
 		$("div#confirm_modal").modal("show");
 	});
 
-	$("a#confirm_delete_userlist_btn").on("click", function(){
+	$("a#confirm_delete_userlist_btn").on("click", function () {
 		var id = $("div#userlist_detail_modal").data("id");
 
 		var datas = {
-			"id" : id
-		}
+			id: id,
+		};
 
 		$.ajax({
-			url: baseurl+"/userlist/delete",
+			url: baseurl + "/userlist/delete",
 			method: "POST",
 			data: datas,
-			success: function(data){
-	        	var data = JSON.parse(data);
-	        	if(data["success"]){
-	        		$.bootstrapGrowl("&nbsp; &nbsp; <span class='fa fa-check-circle' style='font-size: 20px'></span> &nbsp; Record successfully deleted.", {
-		              type: "success",
-		              width: 300
-		            });
+			success: function (data) {
+				var data = JSON.parse(data);
+				if (data["success"]) {
+					$.bootstrapGrowl(
+						"&nbsp; &nbsp; <span class='fa fa-check-circle' style='font-size: 20px'></span> &nbsp; Record successfully deleted.",
+						{
+							type: "success",
+							width: 300,
+						}
+					);
 
-	        		$("div#userlist_detail_modal").modal("hide");
-	        		$("table#userlisttable").find("tr#"+id).remove();
-	        	}
-
-			}
+					$("div#userlist_detail_modal").modal("hide");
+					$("table#userlisttable")
+						.find("tr#" + id)
+						.remove();
+				}
+			},
 		});
 
-		$('div#userlist_detail_modal').on('hide.bs.modal', function () {
-	        $("div#confirm_modal").modal("hide");
-	        $('html, body').css({
-	            overflow: 'hidden',
-	            height: '100%'
-        	});
-      	});
+		$("div#userlist_detail_modal").on("hide.bs.modal", function () {
+			$("div#confirm_modal").modal("hide");
+			$("html, body").css({
+				overflow: "hidden",
+				height: "100%",
+			});
+		});
 	});
-
 });

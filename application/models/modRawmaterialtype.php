@@ -3,16 +3,14 @@
 if (!defined('BASEPATH'))
 	exit('No direct script access allowed');
 
-class ModRawmaterial extends CI_Model {
+class ModRawmaterialtype extends CI_Model {
 
-	public $NAMESPACE = "raw_material";
-	private $TABLE = "raw_material",
+	public $NAMESPACE = "raw_material_type";
+	private $TABLE = "raw_material_type",
 		$FIELDS = array(
-		"id" => "raw_material.id",
-		"itemcode" => "raw_material.itemcode",
-		"description" => "raw_material.description",
-		"type_id" => "raw_material.type_id",
-		"uom" => "raw_material.uom"
+		"id" => "raw_material_type.id",
+		"description" => "raw_material_type.description",
+		"color" => "raw_material_type.color"
 	);
 
 	function __construct() {
@@ -21,10 +19,8 @@ class ModRawmaterial extends CI_Model {
 	}
 
 	function getAll($param) {
-		$this->FIELDS["uom_description"] = "uom.description";
-		$this->FIELDS["uom_abbr"] = "uom.abbreviation";
-		$this->FIELDS["type_description"] = "raw_material_type.description";
 		$tablefield = "";
+		$this->FIELDS["text"] = "raw_material_type.description";
 
 		foreach ($this->FIELDS as $alias => $field) {
 			if ($tablefield != "") {
@@ -39,9 +35,7 @@ class ModRawmaterial extends CI_Model {
 		}
 
 		$this->db->select($tablefield);
-		$this->db->from("raw_material");
-		$this->db->join('uom', 'uom.id = raw_material.uom');
-		$this->db->join('raw_material_type', 'raw_material_type.id = raw_material.type_id');
+		$this->db->from("raw_material_type");
 		$query = $this->db->get();
 
 		return $query;
@@ -59,7 +53,7 @@ class ModRawmaterial extends CI_Model {
 			}
 		}
 
-		if ($this->db->insert('raw_material', $data)) {
+		if ($this->db->insert('raw_material_type', $data)) {
 			//$result_row = $this->db->query("SELECT LAST_INSERT_ID() AS `id`")->result_object();
 			$result["id"] = $this->db->insert_id();
 			$result["success"] = true;
@@ -86,7 +80,7 @@ class ModRawmaterial extends CI_Model {
 
 		$this->db->where($this->FIELDS['id'], $id);
 
-		if ($this->db->update('raw_material', $data)) {
+		if ($this->db->update('raw_material_type', $data)) {
 			$result["success"] = true;
 		} else {
 			$result["success"] = false;
@@ -103,7 +97,7 @@ class ModRawmaterial extends CI_Model {
 		$result = array();
 		$this->db->where($this->FIELDS['id'], $param["id"]);
 
-		if ($this->db->delete('raw_material')) {
+		if ($this->db->delete('raw_material_type')) {
 			$result["id"] = $param["id"];
 			$result["success"] = true;
 		} else {
@@ -117,11 +111,11 @@ class ModRawmaterial extends CI_Model {
 
 	function checkcode($param) {
 		$this->db->select("id");
-		$this->db->from("raw_material");
+		$this->db->from("raw_material_type");
 		if(isset($param["id"])){
-			$this->db->where('raw_material.id !=', $param["id"]);
+			$this->db->where('raw_material_type.id !=', $param["id"]);
 		}
-		$this->db->where('UCASE(raw_material.itemcode) =', $param["itemcode"]);
+		$this->db->where('UCASE(raw_material_type.itemcode) =', $param["itemcode"]);
 		$query = $this->db->get();
 
 		return $query;

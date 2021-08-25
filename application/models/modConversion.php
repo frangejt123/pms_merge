@@ -3,27 +3,30 @@
 if (!defined('BASEPATH'))
 	exit('No direct script access allowed');
 
-class ModConversion extends CI_Model {
+class ModConversion extends CI_Model
+{
 
 	public $NAMESPACE = "conversion";
 	private $TABLE = "conversion",
 		$FIELDS = array(
-		"id" => "conversion.id",
-		"raw_material_id" => "conversion.raw_material_id",
-		"product_code" => "conversion.product_code",
-		"conversion" => "conversion.conversion"
-	);
+			"id" => "conversion.id",
+			"raw_material_id" => "conversion.raw_material_id",
+			"product_code" => "conversion.product_code",
+			"conversion" => "conversion.conversion"
+		);
 
-	function __construct() {
+	function __construct()
+	{
 		// Call the Model constructor
 		parent::__construct();
 	}
 
-	function getAll($param) {
+	function getAll($param)
+	{
 		$this->FIELDS["raw_material"] = "raw_material.description";
 		$this->FIELDS["product_description"] = "product.description";
 		$this->FIELDS["uom_abbr"] = "uom.abbreviation";
-		$this->FIELDS["type"] = "raw_material.type";
+		$this->FIELDS["type"] = "raw_material.type_id";
 
 		$tablefield = "";
 
@@ -33,7 +36,7 @@ class ModConversion extends CI_Model {
 			}
 			//Construct table field selection
 			$tablefield .= $field . " AS `" . $alias . "`";
-			if($param)
+			if ($param)
 				if (array_key_exists($alias, $param)) {
 					$this->db->where($field, $param[$alias]);
 				}
@@ -51,7 +54,8 @@ class ModConversion extends CI_Model {
 		return $query;
 	}
 
-	function insert($param) {
+	function insert($param)
+	{
 		$result = array();
 		$data = array();
 
@@ -76,11 +80,12 @@ class ModConversion extends CI_Model {
 		return $result;
 	}
 
-	function update($param) {
+	function update($param)
+	{
 
 		$result = array();
 		$data = array();
-//        $param["id"] = $param["_server_id"];
+		//        $param["id"] = $param["_server_id"];
 		$id = $param["id"];
 
 		foreach ($this->FIELDS as $alias => $field) {
@@ -102,7 +107,8 @@ class ModConversion extends CI_Model {
 	}
 
 
-	function delete($param) {
+	function delete($param)
+	{
 
 		$result = array();
 		$this->db->where($this->FIELDS['id'], $param["id"]);
@@ -118,8 +124,4 @@ class ModConversion extends CI_Model {
 
 		return $result;
 	}
-
-
-
-
 }

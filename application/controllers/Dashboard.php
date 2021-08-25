@@ -80,7 +80,6 @@ class Dashboard extends CI_Controller {
 
 
 		echo json_encode($response);
-
 	}
 
 	public function productContribution(){
@@ -92,7 +91,7 @@ class Dashboard extends CI_Controller {
 
 		$param["datefrom"] = $param["date"][0];
 		$param["dateto"] = $param["date"][6];
-		$param["branch_id"] = $_SESSION["rgc_branch_id"];
+		$param["branch_id"] = isset($param["branch_id"]) ? $param["branch_id"] : $_SESSION["rgc_branch_id"];
 
 //		$param["datefrom"] = "2021-01-01";
 //		$param["dateto"] = "2021-01-07";
