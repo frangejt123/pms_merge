@@ -290,7 +290,7 @@ $(document).ready(function () {
 						uom_description +
 						"</td><td>" +
 						parseFloat(data["price"]).toFixed(2) +
-						"qwe</td></tr>";
+						"</td></tr>";
 
 					$("table#producttable tbody").prepend(tr);
 					$('[data-toggle="tooltip"]').tooltip();
