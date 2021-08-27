@@ -43,6 +43,7 @@ $(document).ready(function () {
 					"'>" +
 					statuslbl[row["status"]] +
 					"</td></tr>";
+				datalen++;
 			});
 
 			$("table#dailyinv_table tbody").html(tr);
@@ -55,7 +56,6 @@ $(document).ready(function () {
 				autoWidth: false,
 				pageLength: 20,
 			});
-			datalen++;
 		},
 	});
 
