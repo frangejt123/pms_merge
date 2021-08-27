@@ -45,6 +45,15 @@ $(document).ready(function () {
 			});
 
 			$("table#dailyinv_table tbody").html(tr);
+			$("table#dailyinv_table").DataTable({
+				paging: true,
+				lengthChange: false,
+				searching: true,
+				ordering: false,
+				info: false,
+				autoWidth: false,
+				pageLength: 20,
+			});
 		},
 	});
 

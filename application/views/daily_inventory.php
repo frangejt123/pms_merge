@@ -11,6 +11,8 @@
 	<link rel="stylesheet" href="<?php echo base_url(); ?>assets/bower_components/bootstrap/dist/css/bootstrap.min.css">
 	<!-- Font Awesome -->
 	<link rel="stylesheet" href="<?php echo base_url(); ?>assets/bower_components/font-awesome/css/font-awesome.min.css">
+	<!-- DataTables -->
+	<link rel="stylesheet" href="<?php echo base_url(); ?>assets/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
 	<!-- Ionicons -->
 	<link rel="stylesheet" href="<?php echo base_url(); ?>assets/bower_components/Ionicons/css/ionicons.min.css">
 	<!-- Theme style -->
@@ -97,7 +99,7 @@
 				<div class="row">
 					<div class="col-lg-12">
 						<div class="box">
-							<div class="box-body no-padding">
+							<div class="box-body">
 								<table class="table table-hover" id="dailyinv_table">
 									<thead>
 										<tr>
@@ -332,6 +334,8 @@
 	<script src="<?php echo base_url(); ?>assets/bower_components/bootstrap-daterangepicker/daterangepicker.js"></script>
 	<!-- datepicker -->
 	<script src="<?php echo base_url(); ?>assets/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+	<script src="<?php echo base_url(); ?>assets/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
+	<script src="<?php echo base_url(); ?>assets/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
 	<!-- Bootstrap WYSIHTML5 -->
 	<script src="<?php echo base_url(); ?>assets/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>
 	<!-- Slimscroll -->

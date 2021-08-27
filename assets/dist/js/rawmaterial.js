@@ -44,9 +44,9 @@ $(document).ready(function () {
 				lengthChange: false,
 				searching: true,
 				ordering: true,
-				info: true,
+				info: false,
 				autoWidth: false,
-				pageLength: 30,
+				pageLength: 20,
 			});
 		},
 	});
