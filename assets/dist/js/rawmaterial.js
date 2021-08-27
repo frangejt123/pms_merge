@@ -39,6 +39,15 @@ $(document).ready(function () {
 			});
 
 			$("table#rawmaterialtable tbody").html(tr);
+			$("table#rawmaterialtable").DataTable({
+				paging: true,
+				lengthChange: false,
+				searching: true,
+				ordering: true,
+				info: true,
+				autoWidth: false,
+				pageLength: 30,
+			});
 		},
 	});
 
@@ -132,6 +141,16 @@ $(document).ready(function () {
 
 								$("table#rawmaterialtable tbody").prepend(tr);
 								$("div#new_rm_modal").modal("hide");
+
+								$("table#rawmaterialtable")
+									.DataTable()
+									.row.add([
+										itemcode,
+										description,
+										type_description,
+										uom_description,
+									])
+									.draw(false);
 
 								$.bootstrapGrowl(
 									"&nbsp; &nbsp; <span class='fa fa-exclamation-circle' style='font-size: 20px'></span> &nbsp; Changes successfully saved!",

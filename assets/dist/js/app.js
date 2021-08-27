@@ -37,7 +37,7 @@ $(document).ready(function () {
 					var d = {
 						password: newpassword,
 					};
-					dochangepassword(d);
+					changepassword(d);
 				} else {
 					$.bootstrapGrowl(
 						"&nbsp; &nbsp; <span class='fa fa-exclamation-circle' style='font-size: 20px'></span> &nbsp; Incorrect Password.",
@@ -51,7 +51,7 @@ $(document).ready(function () {
 		});
 	});
 
-	function dochangepassword(data) {
+	function changepassword(data) {
 		$.ajax({
 			method: "POST",
 			data: data,

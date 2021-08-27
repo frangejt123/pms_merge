@@ -10,10 +10,10 @@ $(document).ready(function () {
 			showWeekNumbers: true,
 		})
 		.on("apply.daterangepicker", function (ev, picker) {
+			var branch_id = userbranch;
 			if (access_level == 0) {
-				var branch_id = $("select#period_branch").select2("val");
+				branch_id = $("select#period_branch").select2("val");
 			}
-			branch_id = userbranch;
 
 			if (branch_id == "" || branch_id == undefined) {
 				alert("Please select branch");
