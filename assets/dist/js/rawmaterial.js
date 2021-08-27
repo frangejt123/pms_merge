@@ -552,11 +552,12 @@ $(document).ready(function () {
 	});
 
 	$("#print_raw_mat").on("click", function () {
-		$.ajax({
-			method: "POST",
-			url: baseurl + "/report/rawamteriallist",
-			success: function (res) {},
-		});
+		// $.ajax({
+		// 	method: "POST",
+		// 	url: baseurl + "/report/rawamteriallist",
+		// 	success: function (res) {},
+		// });
+		window.open(baseurl + "/report/rawamteriallist");
 	});
 
 	function populateSelect2(type, uom) {
