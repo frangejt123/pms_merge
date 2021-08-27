@@ -180,12 +180,16 @@ $(document).ready(function () {
 	$("div#rm_detail_modal").on("shown.bs.modal", function () {
 		var id = $("div#rm_detail_modal").data("id");
 
-		var tds = $("table#rawmaterialtable tbody tr#" + id).find("td");
+		var tds = $("table#rawmaterialtable").find("tr#" + id + " td");
 
+		console.log(tds);
 		var itemcode = $(tds[0]).html();
 		var description = $(tds[1]).html();
 		var typeval = $(tds[2]).attr("id");
 		var uomval = $(tds[3]).attr("id");
+
+		console.log(id);
+		console.log(itemcode);
 
 		$("input#update_rm_itemcode").val(itemcode);
 		$("input#update_description").val(description);
