@@ -122,7 +122,7 @@ $pdf = new PDFREPORT("P", 'mm', 'LETTER', true, 'UTF-8', false);
 
 // set auto page breaks
 $pdf->SetAutoPageBreak(FALSE, PDF_MARGIN_BOTTOM);
-$pdf->SetTitle('RIBSHACK DRINK PERCENTAGE');
+$pdf->SetTitle('RIBSHACK - RAW MATERIALS');
 // set default header data
 $pdf->setHtmlHeader($operated_by);
 $pdf->setHtmlHeaderAddress($address);
