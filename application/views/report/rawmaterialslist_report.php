@@ -90,7 +90,7 @@ foreach($rawmat as $ind => $row){
 
 //	$meals_possold += $row["pos_total"];
     $y += 7;
-    if($counter >= 10){
+    if($counter >= 20){
         $pdf->AddPage();
         $y = 42;
         $counter = 1;
@@ -124,5 +124,3 @@ $pdf->SetFont('helvetica', 'B', 20);
 
 $pdf->Output();
 // $pdf->Write(5, 'Some sample text');
-
-?>
