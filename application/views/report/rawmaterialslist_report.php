@@ -150,7 +150,7 @@ foreach ($rawmat as $ind => $row) {
 
 	//	$meals_possold += $row["pos_total"];
 	$y += 5;
-	if ($counter >= 30) {
+	if ($counter >= 35) {
 		$pdf->AddPage();
 		$y = 42;
 		$counter = 1;
