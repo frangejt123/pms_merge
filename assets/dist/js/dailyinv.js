@@ -262,6 +262,8 @@ $(document).ready(function () {
 
 	/* on row click */
 	$("table#dailyinv_table tbody").on("click", "tr", function () {
+		if ($(this).hasClass("dataTables_empty")) return;
+
 		var id = $(this).attr("id");
 		var period_date = $(this).find("td.tr_period_date").html();
 		var status = $(this).find("td.di_status").html();
