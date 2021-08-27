@@ -129,18 +129,19 @@ $pdf->setHtmlHeaderAddress($address);
 //$pdf->setPeriodDate($period_date);
 
 $pdf->AddPage();
-$pdf->SetFont('helvetica', '', 7);
-$pdf->writeHTMLCell(50, 0, 5, 34, "CODE", 1, 1, 0, 'top', '');
-$pdf->writeHTMLCell(100, 0, 55, 34, "DESCRIPTION", 1, 1, 0, 'top', '');
-$pdf->writeHTMLCell(20, 0, 155, 34, "UOM", 1, 1, 0, 'top', '');
-$pdf->writeHTMLCell(20, 0, 175, 34, "QTY", 1, 1, 0, 'top', '');
 
 $y = 42;
 $counter = 1;
 //$meals_possold = 0;
 foreach ($rawmat as $ind => $row) {
 
-	$pdf->SetFont('helvetica', '', 12);
+	$pdf->SetFont('helvetica', '', 7);
+	$pdf->writeHTMLCell(50, 0, 5, 34, "CODE", 1, 1, 0, 'top', '');
+	$pdf->writeHTMLCell(100, 0, 55, 34, "DESCRIPTION", 1, 1, 0, 'top', '');
+	$pdf->writeHTMLCell(20, 0, 155, 34, "UOM", 1, 1, 0, 'top', '');
+	$pdf->writeHTMLCell(20, 0, 175, 34, "QTY", 1, 1, 0, 'top', '');
+
+	$pdf->SetFont('helvetica', '', 10);
 	$pdf->writeHTMLCell(50, 0, 5, $y, $row["itemcode"], 0, 1, 0, 'top', '');
 	$pdf->writeHTMLCell(100, 0, 55, $y, $row["description"], 0, 1, 0, 'top', '');
 	$pdf->writeHTMLCell(20, 0, 155, $y, $row["uom_abbr"], 0, 1, 0, 'top', '');
