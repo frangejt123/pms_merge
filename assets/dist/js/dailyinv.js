@@ -16,7 +16,6 @@ $(document).ready(function () {
 		$(this).parent().parent().parent().addClass("active");
 	});
 
-	var datalen = 0;
 	$.ajax({
 		method: "POST",
 		url: baseurl + "/dailyinventory/getAll",
@@ -43,7 +42,6 @@ $(document).ready(function () {
 					"'>" +
 					statuslbl[row["status"]] +
 					"</td></tr>";
-				datalen++;
 			});
 
 			$("table#dailyinv_table tbody").html(tr);
@@ -264,8 +262,6 @@ $(document).ready(function () {
 
 	/* on row click */
 	$("table#dailyinv_table tbody").on("click", "tr", function () {
-		if (datalen < 1) return false;
-
 		var id = $(this).attr("id");
 		var period_date = $(this).find("td.tr_period_date").html();
 		var status = $(this).find("td.di_status").html();

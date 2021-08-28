@@ -18,6 +18,10 @@ $(document).ready(function () {
 				tr +=
 					'<tr id="' +
 					row["id"] +
+					'" uom="' +
+					row["uom"] +
+					'" type="' +
+					row["type_id"] +
 					'">' +
 					"<td>" +
 					row["itemcode"] +
@@ -25,14 +29,10 @@ $(document).ready(function () {
 					"<td>" +
 					row["description"] +
 					"</td>" +
-					'<td id="' +
-					row["type_id"] +
-					'">' +
+					"<td>" +
 					row["type_description"] +
 					"</td>" +
-					'<td id="' +
-					row["uom"] +
-					'">' +
+					"<td>" +
 					row["uom_description"] +
 					"</td>" +
 					"</tr>";
@@ -117,40 +117,44 @@ $(document).ready(function () {
 						success: function (res) {
 							var res = JSON.parse(res);
 							if (res["success"]) {
-								var tr =
-									'<tr id="' +
-									res["id"] +
-									'">' +
-									"<td>" +
-									itemcode +
-									"</td>" +
-									"<td>" +
-									description +
-									"</td>" +
-									'<td id="' +
-									type +
-									'">' +
-									type_description +
-									"</td>" +
-									'<td id="' +
-									uom +
-									'">' +
-									uom_description +
-									"</td>" +
-									"</tr>";
+								// var tr =
+								// 	'<tr id="' +
+								// 	res["id"] +
+								// 	'">' +
+								// 	"<td>" +
+								// 	itemcode +
+								// 	"</td>" +
+								// 	"<td>" +
+								// 	description +
+								// 	"</td>" +
+								// 	'<td id="' +
+								// 	type +
+								// 	'">' +
+								// 	type_description +
+								// 	"</td>" +
+								// 	'<td id="' +
+								// 	uom +
+								// 	'">' +
+								// 	uom_description +
+								// 	"</td>" +
+								// 	"</tr>";
 
-								$("table#rawmaterialtable tbody").prepend(tr);
-								$("div#new_rm_modal").modal("hide");
-
-								$("table#rawmaterialtable")
-									.DataTable()
-									.row.add([
+								// $("table#rawmaterialtable tbody").prepend(tr);
+								var tbl = $("table#rawmaterialtable").DataTable();
+								tbl.row
+									.add([
 										itemcode,
 										description,
 										type_description,
 										uom_description,
 									])
-									.draw(false);
+									.node().id = res["id"];
+								tbl.draw(false);
+
+								$("table#rawmaterialtable tbody")
+									.find("tr#" + res["id"])
+									.attr({ uom: uom, type: type });
+								$("div#new_rm_modal").modal("hide");
 
 								$.bootstrapGrowl(
 									"&nbsp; &nbsp; <span class='fa fa-exclamation-circle' style='font-size: 20px'></span> &nbsp; Changes successfully saved!",
@@ -170,6 +174,11 @@ $(document).ready(function () {
 
 	/* on row click */
 	$("table#rawmaterialtable tbody").on("click", "tr", function () {
+		var recordsCount = $("table#rawmaterialtable")
+			.DataTable()
+			.page.info().recordsDisplay;
+		if (recordsCount < 1) return false;
+
 		if (!$(this).parent().hasClass("edit")) return;
 		var id = $(this).attr("id");
 
@@ -179,17 +188,13 @@ $(document).ready(function () {
 
 	$("div#rm_detail_modal").on("shown.bs.modal", function () {
 		var id = $("div#rm_detail_modal").data("id");
+		var tr = $("table#rawmaterialtable").find("tr#" + id);
+		var tds = tr.find("td");
 
-		var tds = $("table#rawmaterialtable").find("tr#" + id + " td");
-
-		console.log(tds);
 		var itemcode = $(tds[0]).html();
 		var description = $(tds[1]).html();
-		var typeval = $(tds[2]).attr("id");
-		var uomval = $(tds[3]).attr("id");
-
-		console.log(id);
-		console.log(itemcode);
+		var uomval = $(tr).attr("uom");
+		var typeval = $(tr).attr("type");
 
 		$("input#update_rm_itemcode").val(itemcode);
 		$("input#update_description").val(description);
@@ -250,25 +255,41 @@ $(document).ready(function () {
 						success: function (res) {
 							var res = JSON.parse(res);
 							if (res["success"]) {
-								var td =
-									"<td>" +
-									itemcode +
-									"</td>" +
-									"<td>" +
-									description +
-									"</td>" +
-									'<td id="' +
-									type +
-									'">' +
-									type_description +
-									"</td>" +
-									'<td id="' +
-									uom +
-									'">' +
-									uom_description +
-									"</td>";
+								// var td =
+								// 	"<td>" +
+								// 	itemcode +
+								// 	"</td>" +
+								// 	"<td>" +
+								// 	description +
+								// 	"</td>" +
+								// 	'<td id="' +
+								// 	type +
+								// 	'">' +
+								// 	type_description +
+								// 	"</td>" +
+								// 	'<td id="' +
+								// 	uom +
+								// 	'">' +
+								// 	uom_description +
+								// 	"</td>";
 
-								$("table#rawmaterialtable tbody tr#" + id).html(td);
+								// $("table#rawmaterialtable tbody tr#" + id).html(td);
+
+								$("table#rawmaterialtable")
+									.DataTable()
+									.row("#" + id)
+									.data([
+										itemcode,
+										description,
+										type_description,
+										uom_description,
+									])
+									.draw();
+
+								$("table#rawmaterialtable tbody")
+									.find("tr#" + id)
+									.attr({ uom: uom, type: type });
+
 								$("div#rm_detail_modal").modal("hide");
 
 								$.bootstrapGrowl(
@@ -314,9 +335,14 @@ $(document).ready(function () {
 					);
 
 					$("div#rm_detail_modal").modal("hide");
+
+					// .find("tr#" + )
+					// .remove();
 					$("table#rawmaterialtable")
-						.find("tr#" + id)
-						.remove();
+						.DataTable()
+						.row("#" + id)
+						.remove()
+						.draw();
 				}
 			},
 		});
